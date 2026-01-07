@@ -5,146 +5,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Factoryorder | Order Manager</title>
     <style>
-        :root {
-            --primary: #2c3e50;
-            --accent: #27ae60;
-            --bg: #f4f7f6;
-            --white: #ffffff;
-            --text: #333;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
-            margin: 0;
-            padding: 10px;
-            padding-bottom: 120px;
-        }
-
-        header {
-            background: var(--primary);
-            color: white;
-            padding: 1rem;
-            text-align: center;
-            border-radius: 8px;
-            margin-bottom: 15px;
-        }
-
-        .customer-section {
-            background: var(--white);
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            text-align: center;
-        }
-
-        .customer-input {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid var(--primary);
-            border-radius: 6px;
-            font-size: 1.1rem;
-            font-weight: bold;
-            text-transform: uppercase;
-            text-align: center;
-        }
-
-        .category-card {
-            background: var(--white);
-            border-radius: 10px;
-            padding: 15px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-
-        h3 {
-            margin-top: 0;
-            color: var(--primary);
-            border-bottom: 2px solid var(--accent);
-            display: inline-block;
-            font-size: 1.1rem;
-        }
-
-        .product-row {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 8px;
-            align-items: center;
-            padding: 12px 0;
-            border-bottom: 1px solid #eee;
-        }
-
+        :root { --primary: #2c3e50; --accent: #27ae60; --bg: #f4f7f6; --white: #ffffff; }
+        body { font-family: sans-serif; background-color: var(--bg); margin: 0; padding: 10px 10px 120px 10px; }
+        header { background: var(--primary); color: white; padding: 1rem; text-align: center; border-radius: 8px; margin-bottom: 10px; }
+        .customer-section { background: var(--white); padding: 15px; border-radius: 10px; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .customer-input { width: 100%; padding: 12px; border: 2px solid var(--primary); border-radius: 6px; font-size: 1.1rem; font-weight: bold; text-transform: uppercase; text-align: center; box-sizing: border-box; }
+        .category-card { background: var(--white); border-radius: 10px; padding: 15px; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        h3 { margin: 0 0 10px 0; color: var(--primary); border-bottom: 2px solid var(--accent); display: inline-block; font-size: 1rem; text-transform: uppercase; }
+        .product-row { display: grid; grid-template-columns: 2fr 1fr; gap: 8px; align-items: center; padding: 10px 0; border-bottom: 1px solid #eee; }
         .product-info { font-weight: 600; font-size: 0.85rem; }
-        .product-meta { font-size: 0.75rem; color: #666; font-weight: normal; }
-
-        input[type="number"] {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            box-sizing: border-box;
-            font-size: 1rem;
-            text-align: center;
-        }
-
-        .row-totals {
-            grid-column: span 2;
-            font-size: 0.8rem;
-            color: var(--accent);
-            font-weight: bold;
-            text-align: right;
-            margin-top: 4px;
-        }
-
-        .summary-panel {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: var(--primary);
-            color: white;
-            padding: 15px;
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            box-shadow: 0 -2px 15px rgba(0,0,0,0.3);
-            z-index: 100;
-        }
-
-        .summary-btn { background: var(--accent); color: white; border: none; padding: 12px 15px; border-radius: 6px; cursor: pointer; font-weight: bold; }
-        .whatsapp-btn { background: #25D366; color: white; border: none; padding: 12px 15px; border-radius: 6px; cursor: pointer; font-weight: bold; margin-top: 10px; width: 100%; }
-
-        #reportModal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.85);
-            z-index: 1000;
-            overflow-y: auto;
-            padding: 15px;
-            box-sizing: border-box;
-        }
-
-        .modal-content {
-            background: white;
-            padding: 20px;
-            border-radius: 12px;
-            max-width: 500px;
-            margin: auto;
-        }
-
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.8rem; }
-        th, td { text-align: left; padding: 8px; border-bottom: 1px solid #ddd; }
-        .close-btn { float: right; font-size: 28px; font-weight: bold; cursor: pointer; }
+        .product-meta { font-size: 0.7rem; color: #666; font-weight: normal; }
+        input[type="number"] { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 1rem; text-align: center; box-sizing: border-box; }
+        .row-totals { grid-column: span 2; font-size: 0.75rem; color: var(--accent); font-weight: bold; text-align: right; }
+        .summary-panel { position: fixed; bottom: 0; left: 0; right: 0; background: var(--primary); color: white; padding: 15px; display: flex; justify-content: space-around; align-items: center; z-index: 100; }
+        .summary-btn { background: var(--accent); color: white; border: none; padding: 12px 15px; border-radius: 6px; font-weight: bold; }
+        #reportModal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 1000; overflow-y: auto; padding: 10px; box-sizing: border-box; }
+        .modal-content { background: white; padding: 15px; border-radius: 12px; max-width: 500px; margin: auto; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.75rem; margin-top: 10px; }
+        th, td { text-align: left; padding: 6px; border-bottom: 1px solid #ddd; }
+        .whatsapp-btn { background: #25D366; color: white; border: none; padding: 15px; border-radius: 6px; width: 100%; font-weight: bold; margin-top: 10px; }
     </style>
 </head>
 <body>
 
-<header>
-    <h1>Factoryorder</h1>
-</header>
+<header><h1>Factoryorder</h1></header>
 
 <div class="customer-section">
     <input type="text" id="customer-name" class="customer-input" placeholder="CUSTOMER NAME" oninput="saveCustomer(this.value)">
@@ -153,76 +37,67 @@
 <div id="app"></div>
 
 <div class="summary-panel">
-    <div>
-        <small>Total Value:</small><br>
-        <strong style="font-size: 1.2rem;">₦<span id="grand-value">0</span></strong>
-    </div>
+    <div>Total Value:<br><strong>₦<span id="grand-value">0</span></strong></div>
     <button class="summary-btn" onclick="showSummary()">VIEW SUMMARY</button>
 </div>
 
 <div id="reportModal">
     <div class="modal-content">
-        <span class="close-btn" onclick="closeModal()">&times;</span>
-        <h2 id="modal-title">ORDER DETAILS</h2>
+        <span style="float:right; font-size:24px; cursor:pointer;" onclick="closeModal()">&times;</span>
+        <h2 style="font-size:1.2rem; text-align:center;">ORDER DETAILS</h2>
         <div id="modal-body"></div>
         <button class="whatsapp-btn" onclick="sendWhatsApp()">SEND VIA WHATSAPP</button>
-        <button onclick="resetData()" style="background: #e74c3c; color:white; border:none; padding:10px; width:100%; margin-top:10px; border-radius:6px;">CLEAR ALL DATA</button>
+        <button onclick="resetData()" style="background:#e74c3c; color:white; border:none; width:100%; padding:10px; margin-top:10px; border-radius:6px;">RESET ALL</button>
     </div>
 </div>
 
 <script>
-    // Data updated from provided images
     const dataStructure = [
-        { 
-            cat: "Skretting - Crumbles & Larva", 
-            items: [
-                { name: "Perla Larva 4.0 1kg", price: 13000, weight: 1 },
-                { name: "0.5mm-0.7mm SKRET", price: 50000, weight: 5 },
-                { name: "1.0mm SKRET", price: 32500, weight: 5 },
-                { name: "1.8mm SKRET", price: 21000, weight: 5 },
-                { name: "2.0mm SKRET", price: 29700, weight: 15 }
-            ]
-        },
-        { 
-            cat: "Skretting - Superior & Essential", 
-            items: [
-                { name: "3.0mm SKRET", price: 24300, weight: 15 },
-                { name: "4.5mm SUPERIOR NG", price: 22200, weight: 15 },
-                { name: "6.0mm SUPERIOR NG", price: 22200, weight: 15 },
-                { name: "8.0mm SUPERIOR NG", price: 22200, weight: 15 },
-                { name: "3.0 ESS", price: 23250, weight: 15 },
-                { name: "4.5 ESS", price: 21150, weight: 15 },
-                { name: "6.0 ESS", price: 19650, weight: 15 },
-                { name: "8.0 ESS", price: 18150, weight: 15 }
-            ]
-        },
-        { 
-            cat: "Hendrix - Broiler Pellets", 
-            items: [
-                { name: "Pre-Starter 25kg Nig", price: 20500, weight: 25 },
-                { name: "Broiler Starter Ng. 25kg", price: 19250, weight: 25 },
-                { name: "Broiler Finisher Ng. 25kg", price: 18750, weight: 25 },
-                { name: "Broiler Starter Ess. 25kg", price: 16500, weight: 25 },
-                { name: "Broiler Finisher Ess. 25kg", price: 16000, weight: 25 }
-            ]
-        },
-        { 
-            cat: "Hendrix - Concentrate (CCT 5%)", 
-            items: [
-                { name: "Layer Production CCT", price: 80000, weight: 50 },
-                { name: "Layer Rearer CCT", price: 77500, weight: 50 },
-                { name: "Broiler Starter CCT", price: 95000, weight: 50 },
-                { name: "Broiler Finisher CCT", price: 92500, weight: 50 },
-                { name: "Breeder CCT", price: 85000, weight: 50 }
-            ]
-        },
-        { 
-            cat: "Hendrix - Mash", 
-            items: [
-                { name: "Layer Production Mash", price: 13000, weight: 25 },
-                { name: "Layer Grower Mash", price: 12900, weight: 25 }
-            ]
-        }
+        { cat: "SKRETTING", items: [
+            { name: "Perla Larva 1kg", price: 13000, w: 1 },
+            { name: "0.5mm SKRET", price: 50000, w: 5 },
+            { name: "1.0mm SKRET", price: 32500, w: 5 },
+            { name: "1.8mm SKRET", price: 21000, w: 5 },
+            { name: "2.0mm SKRET", price: 29700, w: 15 }
+        ]},
+        { cat: "SUPERIOR", items: [
+            { name: "3.0mm SUPERIOR", price: 24300, w: 15 },
+            { name: "4.5mm SUPERIOR", price: 22200, w: 15 },
+            { name: "6.0mm SUPERIOR", price: 22200, w: 15 },
+            { name: "8.0mm SUPERIOR", price: 22200, w: 15 }
+        ]},
+        { cat: "ESSENTIAL", items: [
+            { name: "3.0mm ESSENTIAL", price: 23250, w: 15 },
+            { name: "4.5mm ESSENTIAL", price: 21150, w: 15 },
+            { name: "6.0mm ESSENTIAL", price: 19650, w: 15 },
+            { name: "8.0mm ESSENTIAL", price: 18150, w: 15 }
+        ]},
+        { cat: "REPRO", items: [ { name: "8.0mm Repro", price: 27000, w: 15 } ]},
+        { cat: "ADDITIVES", items: [
+            { name: "Selko pH", price: 100000, w: 25 },
+            { name: "Aqua Care", price: 47500, w: 1 }
+        ]},
+        { cat: "HENDRIX PRO", items: [
+            { name: "Prestarter 25kg", price: 20500, w: 25 },
+            { name: "BStarter Pro 25kg", price: 19250, w: 25 },
+            { name: "BGrower Pro 25kg", price: 18750, w: 25 },
+            { name: "BFinisher Pro 25kg", price: 18000, w: 25 }
+        ]},
+        { cat: "HENDRIX ESSENTIAL", items: [
+            { name: "BStarter Ess 25kg", price: 16500, w: 25 },
+            { name: "BFinisher Ess 25kg", price: 16000, w: 25 }
+        ]},
+        { cat: "CONCENTRATE", items: [
+            { name: "Layer Prod CCT", price: 80000, w: 50 },
+            { name: "Layer Rearer CCT", price: 77500, w: 50 },
+            { name: "Broiler Starter CCT", price: 95000, w: 50 },
+            { name: "Broiler Finisher CCT", price: 92500, w: 50 },
+            { name: "Breeder CCT", price: 85000, w: 50 }
+        ]},
+        { cat: "MASH", items: [
+            { name: "Layer Mash 25kg", price: 13000, w: 25 },
+            { name: "Grower Mash 25kg", price: 12900, w: 25 }
+        ]}
     ];
 
     let state = JSON.parse(localStorage.getItem('factoryOrderData')) || {};
@@ -232,26 +107,16 @@
         const app = document.getElementById('app');
         document.getElementById('customer-name').value = customerName;
         let html = '';
-
         dataStructure.forEach(group => {
             html += `<div class="category-card"><h3>${group.cat}</h3>`;
             group.items.forEach(item => {
                 const id = item.name.replace(/\s+/g, '-');
                 const qty = state[id] || '';
-                const rowVal = qty ? (qty * item.price) : 0;
-                const rowWeight = qty ? (qty * item.weight) : 0;
-                
                 html += `
                     <div class="product-row">
-                        <div class="product-info">
-                            ${item.name}<br>
-                            <span class="product-meta">₦${item.price.toLocaleString()} per bag (${item.weight}kg)</span>
-                        </div>
-                        <input type="number" placeholder="Qty" value="${qty}" 
-                            oninput="update('${id}', this.value)">
-                        <div class="row-totals" id="total-${id}">
-                            ${qty > 0 ? rowWeight + 'kg | ₦' + rowVal.toLocaleString() : ''}
-                        </div>
+                        <div class="product-info">${item.name}<br><span class="product-meta">₦${item.price.toLocaleString()} (${item.w}kg)</span></div>
+                        <input type="number" placeholder="Qty" value="${qty}" oninput="update('${id}', this.value)">
+                        <div class="row-totals" id="total-${id}">${qty > 0 ? (qty * item.w) + 'kg | ₦' + (qty * item.price).toLocaleString() : ''}</div>
                     </div>`;
             });
             html += `</div>`;
@@ -260,108 +125,60 @@
         calculateGrandTotals();
     }
 
-    function saveCustomer(val) {
-        customerName = val.toUpperCase();
-        localStorage.setItem('factoryCustomerName', customerName);
-    }
+    function saveCustomer(val) { customerName = val.toUpperCase(); localStorage.setItem('factoryCustomerName', customerName); }
+    function findItem(id) { for (const g of dataStructure) { for (const i of g.items) { if (i.name.replace(/\s+/g, '-') === id) return i; } } }
 
     function update(id, value) {
         const qty = parseInt(value) || 0;
-        if (qty <= 0) delete state[id];
-        else state[id] = qty;
-
+        qty <= 0 ? delete state[id] : state[id] = qty;
         localStorage.setItem('factoryOrderData', JSON.stringify(state));
-        
-        const item = findItemById(id);
-        const display = document.getElementById(`total-${id}`);
-        if (qty > 0) {
-            display.innerText = `${qty * item.weight}kg | ₦${(qty * item.price).toLocaleString()}`;
-        } else {
-            display.innerText = '';
-        }
+        const item = findItem(id);
+        document.getElementById(`total-${id}`).innerText = qty > 0 ? `${qty * item.w}kg | ₦${(qty * item.price).toLocaleString()}` : '';
         calculateGrandTotals();
-    }
-
-    function findItemById(id) {
-        for (const g of dataStructure) {
-            for (const i of g.items) {
-                if (i.name.replace(/\s+/g, '-') === id) return i;
-            }
-        }
     }
 
     function calculateGrandTotals() {
         let totalVal = 0;
-        for (const [id, qty] of Object.entries(state)) {
-            const item = findItemById(id);
-            if (item) totalVal += (qty * item.price);
-        }
+        for (const [id, qty] of Object.entries(state)) { const item = findItem(id); if (item) totalVal += (qty * item.price); }
         document.getElementById('grand-value').innerText = totalVal.toLocaleString();
     }
 
     function showSummary() {
         const body = document.getElementById('modal-body');
-        let totalWeight = 0;
-        let totalVal = 0;
-        let totalQty = 0;
-        
-        let tableHtml = `<div style="text-align:center; margin-bottom:10px;"><strong>CUSTOMER: ${customerName || 'NOT SPECIFIED'}</strong></div>`;
-        tableHtml += `<table><tr><th>Item</th><th>Qty</th><th>Wght</th><th>Value</th></tr>`;
+        let totalW = 0, totalV = 0, totalQ = 0;
+        let tableHtml = `<div style="text-align:center; font-weight:bold; margin-bottom:10px;">${customerName || 'NO NAME'}</div>`;
+        tableHtml += `<table><tr><th>Item</th><th>Price x Qty</th><th>Wght</th><th>Total</th></tr>`;
         
         for (const [id, qty] of Object.entries(state)) {
-            const item = findItemById(id);
+            const item = findItem(id);
             if (item) {
-                const w = qty * item.weight;
-                const v = qty * item.price;
-                totalWeight += w; totalVal += v; totalQty += qty;
-                tableHtml += `<tr><td>${item.name}</td><td>${qty}</td><td>${w}kg</td><td>₦${v.toLocaleString()}</td></tr>`;
+                const w = qty * item.w, v = qty * item.price;
+                totalW += w; totalV += v; totalQ += qty;
+                tableHtml += `<tr><td>${item.name}</td><td>₦${item.price.toLocaleString()} x ${qty}</td><td>${w}kg</td><td>₦${v.toLocaleString()}</td></tr>`;
             }
         }
-        
-        tableHtml += `</table><div style="margin-top:15px; border-top:2px solid #333; padding-top:10px;">
-            <strong>Total Quantity:</strong> ${totalQty} Bags<br>
-            <strong>Total Weight:</strong> ${totalWeight} kg<br>
-            <strong>Grand Total:</strong> ₦${totalVal.toLocaleString()}</div>`;
-        
+        tableHtml += `</table><div style="margin-top:10px; font-weight:bold; border-top:1px solid #000;">Bags: ${totalQ} | Weight: ${totalW}kg<br>Total: ₦${totalV.toLocaleString()}</div>`;
         body.innerHTML = tableHtml;
         document.getElementById('reportModal').style.display = 'block';
     }
 
     function sendWhatsApp() {
-        let text = "*ORDER DETAILS*\n";
-        text += `*CUSTOMER: ${customerName || 'N/A'}*\n`;
-        text += "--------------------------\n";
-        let totalVal = 0;
-        let totalW = 0;
-        
+        let text = `*ORDER DETAILS*\n*CUSTOMER: ${customerName || 'N/A'}*\n--------------------------\n`;
+        let totalV = 0, totalW = 0;
         for (const [id, qty] of Object.entries(state)) {
-            const item = findItemById(id);
+            const item = findItem(id);
             if (item) {
-                const v = qty * item.price;
-                const w = qty * item.weight;
-                text += `• ${item.name}: ${qty} bags (₦${v.toLocaleString()})\n`;
-                totalVal += v;
-                totalW += w;
+                const v = qty * item.price, w = qty * item.w;
+                text += `• ${item.name}\n  ₦${item.price.toLocaleString()} x ${qty} = ₦${v.toLocaleString()} (${w}kg)\n`;
+                totalV += v; totalW += w;
             }
         }
-        
-        text += `--------------------------\n*TOTAL WEIGHT:* ${totalW}kg\n*TOTAL VALUE:* ₦${totalVal.toLocaleString()}`;
+        text += `--------------------------\n*TOTAL WEIGHT:* ${totalW}kg\n*TOTAL VALUE:* ₦${totalV.toLocaleString()}`;
         window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
     }
 
     function closeModal() { document.getElementById('reportModal').style.display = 'none'; }
-
-    function resetData() {
-        if(confirm("Clear current order and name?")) {
-            state = {};
-            customerName = '';
-            localStorage.removeItem('factoryOrderData');
-            localStorage.removeItem('factoryCustomerName');
-            init();
-            closeModal();
-        }
-    }
-
+    function resetData() { if(confirm("Clear Order?")) { state = {}; customerName = ''; localStorage.clear(); init(); closeModal(); } }
     init();
 </script>
 </body>
