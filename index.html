@@ -28,7 +28,27 @@
             padding: 1rem;
             text-align: center;
             border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .customer-section {
+            background: var(--white);
+            padding: 15px;
+            border-radius: 10px;
             margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .customer-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--primary);
+            border-radius: 6px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            text-align: center;
         }
 
         .category-card {
@@ -59,7 +79,7 @@
         .product-info { font-weight: 600; font-size: 0.85rem; }
         .product-meta { font-size: 0.75rem; color: #666; font-weight: normal; }
 
-        input {
+        input[type="number"] {
             width: 100%;
             padding: 10px;
             border: 1px solid #ddd;
@@ -125,6 +145,10 @@
 <header>
     <h1>Factoryorder</h1>
 </header>
+
+<div class="customer-section">
+    <input type="text" id="customer-name" class="customer-input" placeholder="CUSTOMER NAME" oninput="saveCustomer(this.value)">
+</div>
 
 <div id="app"></div>
 
@@ -202,9 +226,11 @@
     ];
 
     let state = JSON.parse(localStorage.getItem('factoryOrderData')) || {};
+    let customerName = localStorage.getItem('factoryCustomerName') || '';
 
     function init() {
         const app = document.getElementById('app');
+        document.getElementById('customer-name').value = customerName;
         let html = '';
 
         dataStructure.forEach(group => {
@@ -234,6 +260,11 @@
         calculateGrandTotals();
     }
 
+    function saveCustomer(val) {
+        customerName = val.toUpperCase();
+        localStorage.setItem('factoryCustomerName', customerName);
+    }
+
     function update(id, value) {
         const qty = parseInt(value) || 0;
         if (qty <= 0) delete state[id];
@@ -241,7 +272,6 @@
 
         localStorage.setItem('factoryOrderData', JSON.stringify(state));
         
-        // Dynamic UI Update
         const item = findItemById(id);
         const display = document.getElementById(`total-${id}`);
         if (qty > 0) {
@@ -275,7 +305,8 @@
         let totalVal = 0;
         let totalQty = 0;
         
-        let tableHtml = `<table><tr><th>Item</th><th>Qty</th><th>Wght</th><th>Value</th></tr>`;
+        let tableHtml = `<div style="text-align:center; margin-bottom:10px;"><strong>CUSTOMER: ${customerName || 'NOT SPECIFIED'}</strong></div>`;
+        tableHtml += `<table><tr><th>Item</th><th>Qty</th><th>Wght</th><th>Value</th></tr>`;
         
         for (const [id, qty] of Object.entries(state)) {
             const item = findItemById(id);
@@ -297,7 +328,9 @@
     }
 
     function sendWhatsApp() {
-        let text = "*ORDER DETAILS*\n--------------------------\n";
+        let text = "*ORDER DETAILS*\n";
+        text += `*CUSTOMER: ${customerName || 'N/A'}*\n`;
+        text += "--------------------------\n";
         let totalVal = 0;
         let totalW = 0;
         
@@ -319,9 +352,11 @@
     function closeModal() { document.getElementById('reportModal').style.display = 'none'; }
 
     function resetData() {
-        if(confirm("Clear current order?")) {
+        if(confirm("Clear current order and name?")) {
             state = {};
+            customerName = '';
             localStorage.removeItem('factoryOrderData');
+            localStorage.removeItem('factoryCustomerName');
             init();
             closeModal();
         }
