@@ -18,12 +18,25 @@
         input[type="number"] { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 1rem; text-align: center; box-sizing: border-box; }
         .row-totals { grid-column: span 2; font-size: 0.75rem; color: var(--accent); font-weight: bold; text-align: right; }
         .summary-panel { position: fixed; bottom: 0; left: 0; right: 0; background: var(--primary); color: white; padding: 15px; display: flex; justify-content: space-around; align-items: center; z-index: 100; }
-        .summary-btn { background: var(--accent); color: white; border: none; padding: 12px 15px; border-radius: 6px; font-weight: bold; }
+        .summary-btn { background: var(--accent); color: white; border: none; padding: 12px 15px; border-radius: 6px; font-weight: bold; cursor: pointer; }
         #reportModal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 1000; overflow-y: auto; padding: 10px; box-sizing: border-box; }
         .modal-content { background: white; padding: 15px; border-radius: 12px; max-width: 500px; margin: auto; }
         table { width: 100%; border-collapse: collapse; font-size: 0.75rem; margin-top: 10px; }
         th, td { text-align: left; padding: 6px; border-bottom: 1px solid #ddd; }
-        .whatsapp-btn { background: #25D366; color: white; border: none; padding: 15px; border-radius: 6px; width: 100%; font-weight: bold; margin-top: 10px; }
+        th { background: #f2f2f2; }
+        .whatsapp-btn { background: #25D366; color: white; border: none; padding: 15px; border-radius: 6px; width: 100%; font-weight: bold; margin-top: 10px; cursor: pointer; }
+        .pdf-btn { background: #3498db; color: white; border: none; padding: 15px; border-radius: 6px; width: 100%; font-weight: bold; margin-top: 10px; cursor: pointer; }
+        .bank-details { background: #f9f9f9; border-left: 4px solid var(--primary); padding: 10px; margin-top: 15px; font-size: 0.8rem; }
+
+        /* Print Media Styles to handle pristine PDF Layouts */
+        @media print {
+            body { background: white; color: black; padding: 0; }
+            header, .customer-section, #app, .summary-panel, .whatsapp-btn, .pdf-btn, #reportModal button, .close-btn { display: none !important; }
+            #reportModal { display: block !important; position: relative; background: none; width: 100%; height: auto; padding: 0; }
+            .modal-content { max-width: 100%; padding: 0; border: none; box-shadow: none; }
+            table { width: 100%; font-size: 0.85rem; }
+            th { background: #e5e5e5 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        }
     </style>
 </head>
 <body>
@@ -43,11 +56,20 @@
 
 <div id="reportModal">
     <div class="modal-content">
-        <span style="float:right; font-size:24px; cursor:pointer;" onclick="closeModal()">&times;</span>
-        <h2 style="font-size:1.2rem; text-align:center;">ORDER DETAILS</h2>
+        <span class="close-btn" style="float:right; font-size:24px; cursor:pointer;" onclick="closeModal()">&times;</span>
+        <h2 style="font-size:1.2rem; text-align:center; margin-top: 5px;">ORDER DETAILS</h2>
         <div id="modal-body"></div>
+        
+        <div class="bank-details">
+            <strong>PAYMENT ACCOUNT DETAILS:</strong><br>
+            Bank: Firstbank<br>
+            Account Name: Skretting Nigeria Ltd<br>
+            Account Number: 2025573747
+        </div>
+
+        <button class="pdf-btn" onclick="exportPDF()">EXPORT AS PDF / PRINT</button>
         <button class="whatsapp-btn" onclick="sendWhatsApp()">SEND VIA WHATSAPP</button>
-        <button onclick="resetData()" style="background:#e74c3c; color:white; border:none; width:100%; padding:10px; margin-top:10px; border-radius:6px;">RESET ALL</button>
+        <button class="close-btn" onclick="resetData()" style="background:#e74c3c; color:white; border:none; width:100%; padding:10px; margin-top:10px; border-radius:6px; font-weight: bold; cursor: pointer;">RESET ALL</button>
     </div>
 </div>
 
@@ -146,34 +168,58 @@
     function showSummary() {
         const body = document.getElementById('modal-body');
         let totalW = 0, totalV = 0, totalQ = 0;
-        let tableHtml = `<div style="text-align:center; font-weight:bold; margin-bottom:10px;">${customerName || 'NO NAME'}</div>`;
-        tableHtml += `<table><tr><th>Item</th><th>Price x Qty</th><th>Wght</th><th>Total</th></tr>`;
+        let tableHtml = `<div style="text-align:center; font-weight:bold; margin-bottom:10px;">CUSTOMER: ${customerName || 'NO NAME'}</div>`;
+        tableHtml += `<table><tr><th>Category</th><th>Type (Item)</th><th>Qty</th><th>Price</th><th>Amount</th></tr>`;
         
-        for (const [id, qty] of Object.entries(state)) {
-            const item = findItem(id);
-            if (item) {
-                const w = qty * item.w, v = qty * item.price;
-                totalW += w; totalV += v; totalQ += qty;
-                tableHtml += `<tr><td>${item.name}</td><td>₦${item.price.toLocaleString()} x ${qty}</td><td>${w}kg</td><td>₦${v.toLocaleString()}</td></tr>`;
-            }
-        }
-        tableHtml += `</table><div style="margin-top:10px; font-weight:bold; border-top:1px solid #000;">Bags: ${totalQ} | Weight: ${totalW}kg<br>Total: ₦${totalV.toLocaleString()}</div>`;
+        dataStructure.forEach(group => {
+            group.items.forEach(item => {
+                const id = item.name.replace(/\s+/g, '-');
+                const qty = state[id] || 0;
+                if (qty > 0) {
+                    const w = qty * item.w;
+                    const v = qty * item.price;
+                    totalW += w; totalV += v; totalQ += qty;
+                    tableHtml += `<tr>
+                        <td>${group.cat}</td>
+                        <td>${item.name} (${item.w}kg)</td>
+                        <td>${qty}</td>
+                        <td>₦${item.price.toLocaleString()}</td>
+                        <td>₦${v.toLocaleString()}</td>
+                    </tr>`;
+                }
+            });
+        });
+        
+        tableHtml += `</table><div style="margin-top:15px; font-weight:bold; border-top:2px solid #000; padding-top: 5px;">`;
+        tableHtml += `Total Qty (Bags): ${totalQ}<br>`;
+        tableHtml += `Total Weight: ${totalW}kg<br>`;
+        tableHtml += `<span style="font-size: 1rem; color: var(--accent);">Total Order Value: ₦${totalV.toLocaleString()}</span></div>`;
         body.innerHTML = tableHtml;
         document.getElementById('reportModal').style.display = 'block';
+    }
+
+    function exportPDF() {
+        window.print();
     }
 
     function sendWhatsApp() {
         let text = `*ORDER DETAILS*\n*CUSTOMER: ${customerName || 'N/A'}*\n--------------------------\n`;
         let totalV = 0, totalW = 0;
-        for (const [id, qty] of Object.entries(state)) {
-            const item = findItem(id);
-            if (item) {
-                const v = qty * item.price, w = qty * item.w;
-                text += `• ${item.name}\n  ₦${item.price.toLocaleString()} x ${qty} = ₦${v.toLocaleString()} (${w}kg)\n`;
-                totalV += v; totalW += w;
-            }
-        }
-        text += `--------------------------\n*TOTAL WEIGHT:* ${totalW}kg\n*TOTAL VALUE:* ₦${totalV.toLocaleString()}`;
+        
+        dataStructure.forEach(group => {
+            group.items.forEach(item => {
+                const id = item.name.replace(/\s+/g, '-');
+                const qty = state[id] || 0;
+                if (qty > 0) {
+                    const v = qty * item.price, w = qty * item.w;
+                    text += `• [${group.cat}] ${item.name}\n  ₦${item.price.toLocaleString()} x ${qty} = ₦${v.toLocaleString()} (${w}kg)\n`;
+                    totalV += v; totalW += w;
+                }
+            });
+        });
+        
+        text += `--------------------------\n*TOTAL WEIGHT:* ${totalW}kg\n*TOTAL VALUE:* ₦${totalV.toLocaleString()}\n\n`;
+        text += `*BANK DETAILS:*\nSkretting Nigeria Ltd\nFirstbank A/C: 2025573747`;
         window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
     }
 
