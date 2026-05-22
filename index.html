@@ -3,239 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Factoryorder | Advanced Order Manager</title>
-    <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIkZhY3RvcnlvcmRlciBNYW5hZ2VyIiwKICAic2hvcnRfbmFtZSI6ICJGYWN0b3J5b3JkZXIiLAogICJzdGFydF91cmwiOiAiLiIsCiAgImRpc3BsYXkiOiAic3RhbmRhbG9uZSIsCiAgImJhY2tncm91bmRfY29sb3IiOiAiI2Y0ZjdmNiIsCiAgInRoZW1lX2NvbG9yIjogIiMyYzNlNTAiCn0=">
+    <title>Factoryorder | Order Manager</title>
     <style>
-        :root { 
-            --primary: #2c3e50; 
-            --accent: #27ae60; 
-            --danger: #e74c3c;
-            --bg: #f4f7f6; 
-            --white: #ffffff; 
-            --text: #333333;
-        }
-        
-        body { 
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
-            background-color: var(--bg); 
-            margin: 0; 
-            padding: 10px 10px 140px 10px;
-            color: var(--text);
-        }
-        
-        header { 
-            background: var(--primary); 
-            color: white; 
-            padding: 1rem; 
-            text-align: center; 
-            border-radius: 8px; 
-            margin-bottom: 10px; 
-        }
-
-        .control-panel {
-            background: var(--white);
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 15px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .customer-input, .discount-input { 
-            width: 100%; 
-            padding: 12px; 
-            border: 2px solid #ddd; 
-            border-radius: 6px; 
-            font-size: 1.1rem; 
-            font-weight: bold; 
-            box-sizing: border-box;
-            transition: border-color 0.2s;
-        }
-        .customer-input:focus, .discount-input:focus {
-            border-color: var(--primary);
-            outline: none;
-        }
-        .customer-input { text-transform: uppercase; text-align: center; }
-
-        .flex-row {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-
-        .btn {
-            padding: 10px 15px;
-            border: none;
-            border-radius: 6px;
-            font-weight: bold;
-            cursor: pointer;
-            font-size: 0.9rem;
-        }
-        .btn-primary { background: var(--primary); color: white; }
-        .btn-accent { background: var(--accent); color: white; }
-        .btn-danger { background: var(--danger); color: white; }
-
-        .category-card { 
-            background: var(--white); 
-            border-radius: 10px; 
-            padding: 15px; 
-            margin-bottom: 15px; 
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05); 
-        }
-        
-        h3 { 
-            margin: 0 0 10px 0; 
-            color: var(--primary); 
-            border-bottom: 2px solid var(--accent); 
-            display: inline-block; 
-            font-size: 1rem; 
-            text-transform: uppercase; 
-        }
-        
-        .product-row { 
-            display: grid; 
-            grid-template-columns: 2fr 1fr; 
-            gap: 8px; 
-            align-items: center; 
-            padding: 12px 0; 
-            border-bottom: 1px solid #eee; 
-        }
-        
-        .product-info { font-weight: 600; font-size: 0.9rem; }
-        .product-meta { font-size: 0.75rem; color: #666; font-weight: normal; margin-top: 4px; display: block; }
-        
-        .qty-input, .price-edit-input { 
-            width: 100%; 
-            padding: 10px; 
-            border: 1px solid #ddd; 
-            border-radius: 6px; 
-            font-size: 1rem; 
-            text-align: center; 
-            box-sizing: border-box; 
-        }
-        .price-edit-input {
-            border-color: #f39c12;
-            background: #fffdf9;
-            margin-top: 4px;
-        }
-        
-        .row-totals { 
-            grid-column: span 2; 
-            font-size: 0.8rem; 
-            color: var(--accent); 
-            font-weight: bold; 
-            text-align: right; 
-            margin-top: 4px;
-        }
-        
-        .summary-panel { 
-            position: fixed; 
-            bottom: 0; 
-            left: 0; 
-            right: 0; 
-            background: var(--primary); 
-            color: white; 
-            padding: 15px; 
-            display: flex; 
-            justify-content: space-around; 
-            align-items: center; 
-            z-index: 100; 
-            box-shadow: 0 -2px 10px rgba(0,0,0,0.15);
-        }
-        
-        .summary-btn { background: var(--accent); color: white; border: none; padding: 12px 15px; border-radius: 6px; font-weight: bold; cursor: pointer;}
-        
-        #reportModal, #historyModal { 
-            display: none; 
-            position: fixed; 
-            top: 0; 
-            left: 0; 
-            width: 100%; 
-            height: 100%; 
-            background: rgba(0,0,0,0.7); 
-            z-index: 1000; 
-            overflow-y: auto; 
-            padding: 10px; 
-            box-sizing: border-box; 
-        }
-        
-        .modal-content { 
-            background: white; 
-            padding: 20px; 
-            border-radius: 12px; 
-            max-width: 500px; 
-            margin: 20px auto; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-        }
-        
-        table { width: 100%; border-collapse: collapse; font-size: 0.8rem; margin-top: 10px; }
-        th, td { text-align: left; padding: 8px; border-bottom: 1px solid #ddd; }
-        th { background: #f8f9fa; font-weight: bold; }
-        
-        .whatsapp-btn { background: #25D366; color: white; border: none; padding: 12px; border-radius: 6px; width: 100%; font-weight: bold; margin-top: 10px; cursor: pointer; font-size: 1rem;}
-        .pdf-btn { background: #e74c3c; color: white; border: none; padding: 12px; border-radius: 6px; width: 100%; font-weight: bold; margin-top: 10px; cursor: pointer; font-size: 1rem;}
-        
-        .history-item {
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            padding: 10px;
-            margin-bottom: 10px;
-            background: #f9f9f9;
-        }
-
-        /* Print Layout Rules for Clean PDF Export */
-        @media print {
-            body { background: white; color: black; padding: 0; }
-            .summary-panel, .control-panel, header, #app, .whatsapp-btn, .pdf-btn, button, .close-x { display: none !important; }
-            #reportModal { position: absolute; left: 0; top: 0; display: block !important; background: transparent; }
-            .modal-content { border: none; box-shadow: none; padding: 0; margin: 0; max-width: 100%; }
-        }
+        :root { --primary: #2c3e50; --accent: #27ae60; --bg: #f4f7f6; --white: #ffffff; }
+        body { font-family: sans-serif; background-color: var(--bg); margin: 0; padding: 10px 10px 120px 10px; }
+        header { background: var(--primary); color: white; padding: 1rem; text-align: center; border-radius: 8px; margin-bottom: 10px; }
+        .customer-section { background: var(--white); padding: 15px; border-radius: 10px; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .customer-input { width: 100%; padding: 12px; border: 2px solid var(--primary); border-radius: 6px; font-size: 1.1rem; font-weight: bold; text-transform: uppercase; text-align: center; box-sizing: border-box; }
+        .category-card { background: var(--white); border-radius: 10px; padding: 15px; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        h3 { margin: 0 0 10px 0; color: var(--primary); border-bottom: 2px solid var(--accent); display: inline-block; font-size: 1rem; text-transform: uppercase; }
+        .product-row { display: grid; grid-template-columns: 2fr 1fr; gap: 8px; align-items: center; padding: 10px 0; border-bottom: 1px solid #eee; }
+        .product-info { font-weight: 600; font-size: 0.85rem; }
+        .product-meta { font-size: 0.7rem; color: #666; font-weight: normal; }
+        input[type="number"] { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 1rem; text-align: center; box-sizing: border-box; }
+        .row-totals { grid-column: span 2; font-size: 0.75rem; color: var(--accent); font-weight: bold; text-align: right; }
+        .summary-panel { position: fixed; bottom: 0; left: 0; right: 0; background: var(--primary); color: white; padding: 15px; display: flex; justify-content: space-around; align-items: center; z-index: 100; }
+        .summary-btn { background: var(--accent); color: white; border: none; padding: 12px 15px; border-radius: 6px; font-weight: bold; }
+        #reportModal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 1000; overflow-y: auto; padding: 10px; box-sizing: border-box; }
+        .modal-content { background: white; padding: 15px; border-radius: 12px; max-width: 500px; margin: auto; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.75rem; margin-top: 10px; }
+        th, td { text-align: left; padding: 6px; border-bottom: 1px solid #ddd; }
+        .whatsapp-btn { background: #25D366; color: white; border: none; padding: 15px; border-radius: 6px; width: 100%; font-weight: bold; margin-top: 10px; }
     </style>
 </head>
 <body>
 
-<header><h1>Factoryorder Pro</h1></header>
+<header><h1>Factoryorder</h1></header>
 
-<div class="control-panel">
+<div class="customer-section">
     <input type="text" id="customer-name" class="customer-input" placeholder="CUSTOMER NAME" oninput="saveCustomer(this.value)">
-    <div class="flex-row">
-        <input type="number" id="discount-rate" class="discount-input" placeholder="Discount %" min="0" max="100" oninput="saveDiscount(this.value)">
-        <button class="btn btn-primary" id="edit-prices-btn" onclick="togglePriceEdit()">Edit Prices</button>
-        <button class="btn btn-primary" onclick="showHistory()">History</button>
-    </div>
 </div>
 
 <div id="app"></div>
 
 <div class="summary-panel">
-    <div>Total: <strong style="color: #27ae60;">₦<span id="grand-value">0</span></strong></div>
+    <div>Total Value:<br><strong>₦<span id="grand-value">0</span></strong></div>
     <button class="summary-btn" onclick="showSummary()">VIEW SUMMARY</button>
 </div>
 
 <div id="reportModal">
     <div class="modal-content">
-        <span class="close-x" style="float:right; font-size:24px; cursor:pointer; font-weight:bold;" onclick="closeModal()">&times;</span>
-        <h2 style="font-size:1.2rem; text-align:center; margin-top: 0;">INVOICE DETAILS</h2>
+        <span style="float:right; font-size:24px; cursor:pointer;" onclick="closeModal()">&times;</span>
+        <h2 style="font-size:1.2rem; text-align:center;">ORDER DETAILS</h2>
         <div id="modal-body"></div>
         <button class="whatsapp-btn" onclick="sendWhatsApp()">SEND VIA WHATSAPP</button>
-        <button class="pdf-btn" onclick="exportToPDF()">EXPORT TO PDF / PRINT</button>
-        <button class="btn btn-accent" style="width: 100%; margin-top:10px; padding:12px;" onclick="saveToHistory()">SAVE TO HISTORY</button>
-        <button onclick="resetData()" style="background:#e74c3c; color:white; border:none; width:100%; padding:12px; margin-top:10px; border-radius:6px; font-weight:bold; cursor:pointer;">RESET CURRENT ORDER</button>
-    </div>
-</div>
-
-<div id="historyModal">
-    <div class="modal-content">
-        <span style="float:right; font-size:24px; cursor:pointer; font-weight:bold;" onclick="closeHistory()">&times;</span>
-        <h2 style="font-size:1.2rem; text-align:center; margin-top:0;">ORDER HISTORY</h2>
-        <div id="history-body"></div>
+        <button onclick="resetData()" style="background:#e74c3c; color:white; border:none; width:100%; padding:10px; margin-top:10px; border-radius:6px;">RESET ALL</button>
     </div>
 </div>
 
 <script>
-    const defaultDataStructure = [
+    const dataStructure = [
         { cat: "SKRETTING", items: [
             { name: "Perla Larva 1kg", price: 13000, w: 1 },
             { name: "0.5mm SKRET", price: 50000, w: 5 },
@@ -283,19 +100,13 @@
         ]}
     ];
 
-    let dataStructure = JSON.parse(localStorage.getItem('factoryCustomPrices')) || defaultDataStructure;
     let state = JSON.parse(localStorage.getItem('factoryOrderData')) || {};
     let customerName = localStorage.getItem('factoryCustomerName') || '';
-    let discountRate = parseFloat(localStorage.getItem('factoryDiscountRate')) || 0;
-    let orderHistory = JSON.parse(localStorage.getItem('factoryOrderHistory')) || [];
-    let isEditingPrices = false;
 
     function init() {
         const app = document.getElementById('app');
         document.getElementById('customer-name').value = customerName;
-        document.getElementById('discount-rate').value = discountRate || '';
         let html = '';
-        
         dataStructure.forEach(group => {
             html += `<div class="category-card"><h3>${group.cat}</h3>`;
             group.items.forEach(item => {
@@ -303,12 +114,8 @@
                 const qty = state[id] || '';
                 html += `
                     <div class="product-row">
-                        <div class="product-info">
-                            ${item.name}
-                            <span class="product-meta" id="meta-${id}">₦${item.price.toLocaleString()} (${item.w}kg)</span>
-                            <input type="number" class="price-edit-input" id="edit-p-${id}" value="${item.price}" style="display:none;" oninput="updateBasePrice('${id}', this.value)">
-                        </div>
-                        <input type="number" class="qty-input" placeholder="Qty" value="${qty}" oninput="updateQuantity('${id}', this.value)">
+                        <div class="product-info">${item.name}<br><span class="product-meta">₦${item.price.toLocaleString()} (${item.w}kg)</span></div>
+                        <input type="number" placeholder="Qty" value="${qty}" oninput="update('${id}', this.value)">
                         <div class="row-totals" id="total-${id}">${qty > 0 ? (qty * item.w) + 'kg | ₦' + (qty * item.price).toLocaleString() : ''}</div>
                     </div>`;
             });
@@ -319,45 +126,9 @@
     }
 
     function saveCustomer(val) { customerName = val.toUpperCase(); localStorage.setItem('factoryCustomerName', customerName); }
-    function saveDiscount(val) { discountRate = parseFloat(val) || 0; localStorage.setItem('factoryDiscountRate', discountRate); calculateGrandTotals(); }
-    
-    function findItem(id) { 
-        for (const g of dataStructure) { 
-            for (const i of g.items) { 
-                if (i.name.replace(/\s+/g, '-') === id) return i; 
-            } 
-        } 
-    }
+    function findItem(id) { for (const g of dataStructure) { for (const i of g.items) { if (i.name.replace(/\s+/g, '-') === id) return i; } } }
 
-    function togglePriceEdit() {
-        isEditingPrices = !isEditingPrices;
-        document.getElementById('edit-prices-btn').innerText = isEditingPrices ? "Done Editing" : "Edit Prices";
-        document.getElementById('edit-prices-btn').style.background = isEditingPrices ? "var(--accent)" : "var(--primary)";
-        
-        dataStructure.forEach(group => {
-            group.items.forEach(item => {
-                const id = item.name.replace(/\s+/g, '-');
-                document.getElementById(`edit-p-${id}`).style.display = isEditingPrices ? 'block' : 'none';
-            });
-        });
-    }
-
-    function updateBasePrice(id, newPrice) {
-        const p = parseFloat(newPrice) || 0;
-        const item = findItem(id);
-        if (item) {
-            item.price = p;
-            localStorage.setItem('factoryCustomPrices', JSON.stringify(dataStructure));
-            document.getElementById(`meta-${id}`).innerText = `₦${p.toLocaleString()} (${item.w}kg)`;
-            const qty = state[id] || 0;
-            if (qty > 0) {
-                document.getElementById(`total-${id}`).innerText = `${qty * item.w}kg | ₦${(qty * p).toLocaleString()}`;
-            }
-            calculateGrandTotals();
-        }
-    }
-
-    function updateQuantity(id, value) {
+    function update(id, value) {
         const qty = parseInt(value) || 0;
         qty <= 0 ? delete state[id] : state[id] = qty;
         localStorage.setItem('factoryOrderData', JSON.stringify(state));
@@ -367,94 +138,48 @@
     }
 
     function calculateGrandTotals() {
-        let grossTotal = 0;
-        for (const [id, qty] of Object.entries(state)) { 
-            const item = findItem(id); 
-            if (item) grossTotal += (qty * item.price); 
-        }
-        let netTotal = grossTotal - (grossTotal * (discountRate / 100));
-        document.getElementById('grand-value').innerText = netTotal.toLocaleString(undefined, {maximumFractionDigits: 2});
-        return { gross: grossTotal, net: netTotal };
+        let totalVal = 0;
+        for (const [id, qty] of Object.entries(state)) { const item = findItem(id); if (item) totalVal += (qty * item.price); }
+        document.getElementById('grand-value').innerText = totalVal.toLocaleString();
     }
 
     function showSummary() {
         const body = document.getElementById('modal-body');
-        let totalW = 0, totalQ = 0;
-        const totals = calculateGrandTotals();
-        
-        let tableHtml = `<div style="text-align:center; font-weight:bold; margin-bottom:10px; font-size:1.1rem;">${customerName || 'CASH CUSTOMER'}</div>`;
-        tableHtml += `<div style="text-align:center; font-size:0.75rem; color:#666; margin-bottom:15px;">Date: ${new Date().toLocaleDateString()}</div>`;
-        tableHtml += `<table><thead><tr><th>Item</th><th>Price x Qty</th><th>Weight</th><th>Subtotal</th></tr></thead><tbody>`;
+        let totalW = 0, totalV = 0, totalQ = 0;
+        let tableHtml = `<div style="text-align:center; font-weight:bold; margin-bottom:10px;">${customerName || 'NO NAME'}</div>`;
+        tableHtml += `<table><tr><th>Item</th><th>Price x Qty</th><th>Wght</th><th>Total</th></tr>`;
         
         for (const [id, qty] of Object.entries(state)) {
             const item = findItem(id);
             if (item) {
                 const w = qty * item.w, v = qty * item.price;
-                totalW += w; totalQ += qty;
+                totalW += w; totalV += v; totalQ += qty;
                 tableHtml += `<tr><td>${item.name}</td><td>₦${item.price.toLocaleString()} x ${qty}</td><td>${w}kg</td><td>₦${v.toLocaleString()}</td></tr>`;
             }
         }
-        tableHtml += `</tbody></table>`;
-        
-        tableHtml += `<div style="margin-top:15px; padding-top:10px; border-top:2px solid #333; font-size:0.85rem; line-height:1.5;">`;
-        tableHtml += `<div><strong>Total Items / Bags:</strong> ${totalQ}</div>`;
-        tableHtml += `<div><strong>Total Gross Weight:</strong> ${totalW.toLocaleString()} kg</div>`;
-        tableHtml += `<div><strong>Gross Value:</strong> ₦${totals.gross.toLocaleString()}</div>`;
-        if (discountRate > 0) {
-            tableHtml += `<div style="color:var(--danger)"><strong>Discount (${discountRate}%):</strong> -₦ ${(totals.gross * (discountRate/100)).toLocaleString()}</div>`;
-        }
-        tableHtml += `<div style="font-size:1.1rem; color:var(--accent); margin-top:5px;"><strong>Net Payable: ₦${totals.net.toLocaleString(undefined, {maximumFractionDigits:2})}</strong></div>`;
-        tableHtml += `</div>`;
-        
+        tableHtml += `</table><div style="margin-top:10px; font-weight:bold; border-top:1px solid #000;">Bags: ${totalQ} | Weight: ${totalW}kg<br>Total: ₦${totalV.toLocaleString()}</div>`;
         body.innerHTML = tableHtml;
         document.getElementById('reportModal').style.display = 'block';
     }
 
     function sendWhatsApp() {
-        const totals = calculateGrandTotals();
-        let text = `*ORDER INVOICE*\n*CUSTOMER:* ${customerName || 'CASH CUSTOMER'}\n*DATE:* ${new Date().toLocaleDateString()}\n--------------------------\n`;
-        let totalW = 0;
+        let text = `*ORDER DETAILS*\n*CUSTOMER: ${customerName || 'N/A'}*\n--------------------------\n`;
+        let totalV = 0, totalW = 0;
         for (const [id, qty] of Object.entries(state)) {
             const item = findItem(id);
             if (item) {
-                text += `• *${item.name}*\n  ₦${item.price.toLocaleString()} x ${qty} = ₦${(qty * item.price).toLocaleString()} (${qty * item.w}kg)\n`;
-                totalW += (qty * item.w);
+                const v = qty * item.price, w = qty * item.w;
+                text += `• ${item.name}\n  ₦${item.price.toLocaleString()} x ${qty} = ₦${v.toLocaleString()} (${w}kg)\n`;
+                totalV += v; totalW += w;
             }
         }
-        text += `--------------------------\n`;
-        text += `*TOTAL WEIGHT:* ${totalW.toLocaleString()}kg\n`;
-        text += `*GROSS TOTAL:* ₦${totals.gross.toLocaleString()}\n`;
-        if(discountRate > 0) text += `*DISCOUNT (${discountRate}%):* -₦${(totals.gross * (discountRate/100)).toLocaleString()}\n`;
-        text += `*NET PAYABLE:* ₦${totals.net.toLocaleString(undefined, {maximumFractionDigits:2})}`;
+        text += `--------------------------\n*TOTAL WEIGHT:* ${totalW}kg\n*TOTAL VALUE:* ₦${totalV.toLocaleString()}`;
         window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
     }
 
-    function exportToPDF() { window.print(); }
-
-    function saveToHistory() {
-        if (Object.keys(state).length === 0) return alert("Cannot save empty order!");
-        const totals = calculateGrandTotals();
-        const orderRecord = {
-            id: Date.now(),
-            customer: customerName || 'CASH CUSTOMER',
-            date: new Date().toLocaleString(),
-            items: JSON.parse(JSON.stringify(state)),
-            netValue: totals.net
-        };
-        orderHistory.unshift(orderRecord);
-        localStorage.setItem('factoryOrderHistory', JSON.stringify(orderHistory));
-        alert("Order successfully written to history log.");
-    }
-
-    function showHistory() {
-        const body = document.getElementById('history-body');
-        if (orderHistory.length === 0) {
-            body.innerHTML = "<p style='text-align:center; color:#666;'>No saved orders found.</p>";
-        } else {
-            let html = "";
-            orderHistory.forEach((order, index) => {
-                html += `
-                <div class="history-item">
-                    <strong>${order.customer}</strong><br>
-                    <small style="color:#666;">${order.date}</small><br>
-                    <strong>Total Value:</strong> ₦${order.ne
+    function closeModal() { document.getElementById('reportModal').style.display = 'none'; }
+    function resetData() { if(confirm("Clear Order?")) { state = {}; customerName = ''; localStorage.clear(); init(); closeModal(); } }
+    init();
+</script>
+</body>
+</html>
