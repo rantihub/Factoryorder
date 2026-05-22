@@ -74,9 +74,10 @@
 </div>
 
 <script>
+    // Sorted out names to avoid repeating the weight text twice during display loops
     const dataStructure = [
         { cat: "SKRETTING", items: [
-            { name: "Perla Larva 1kg", price: 13000, w: 1 },
+            { name: "Perla Larva", price: 13000, w: 1 },
             { name: "0.5mm SKRET", price: 50000, w: 5 },
             { name: "1.0mm SKRET", price: 32500, w: 5 },
             { name: "1.8mm SKRET", price: 21000, w: 5 },
@@ -100,14 +101,14 @@
             { name: "Aqua Care", price: 47500, w: 1 }
         ]},
         { cat: "HENDRIX PRO", items: [
-            { name: "Prestarter 25kg", price: 20500, w: 25 },
-            { name: "BStarter Pro 25kg", price: 19250, w: 25 },
-            { name: "BGrower Pro 25kg", price: 18750, w: 25 },
-            { name: "BFinisher Pro 25kg", price: 18750, w: 25 }
+            { name: "Prestarter", price: 20500, w: 25 },
+            { name: "BStarter Pro", price: 19250, w: 25 },
+            { name: "BGrower Pro", price: 18750, w: 25 },
+            { name: "BFinisher Pro", price: 18750, w: 25 }
         ]},
         { cat: "HENDRIX ESSENTIAL", items: [
-            { name: "BStarter Ess 25kg", price: 16500, w: 25 },
-            { name: "BFinisher Ess 25kg", price: 16000, w: 25 }
+            { name: "BStarter Ess", price: 16500, w: 25 },
+            { name: "BFinisher Ess", price: 16000, w: 25 }
         ]},
         { cat: "CONCENTRATE", items: [
             { name: "Layer Prod CCT", price: 80000, w: 50 },
@@ -117,8 +118,8 @@
             { name: "Breeder CCT", price: 85000, w: 50 }
         ]},
         { cat: "MASH", items: [
-            { name: "Layer Mash 25kg", price: 13000, w: 25 },
-            { name: "Grower Mash 25kg", price: 12900, w: 25 }
+            { name: "Layer Mash", price: 13000, w: 25 },
+            { name: "Grower Mash", price: 12900, w: 25 }
         ]}
     ];
 
@@ -212,7 +213,7 @@
                 const qty = state[id] || 0;
                 if (qty > 0) {
                     const v = qty * item.price, w = qty * item.w;
-                    text += `• [${group.cat}] ${item.name}\n  ₦${item.price.toLocaleString()} x ${qty} = ₦${v.toLocaleString()} (${w}kg)\n`;
+                    text += `• [${group.cat}] ${item.name} (${item.w}kg)\n  ₦${item.price.toLocaleString()} x ${qty} = ₦${v.toLocaleString()} (${w}kg)\n`;
                     totalV += v; totalW += w;
                 }
             });
