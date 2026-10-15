@@ -1,585 +1,761 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Factoryorder | Order Manager</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Factoryorder - Order Management System</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                            800: '#166534',
+                            900: '#0f172a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root { 
-            --primary: #2c3e50; 
-            --primary-light: #34495e;
-            --accent: #27ae60; 
-            --accent-light: #2ecc71;
-            --danger: #e74c3c;
-            --bg: #f5f7fa; 
-            --white: #ffffff; 
-            --text-main: #2d3436;
-            --text-muted: #7f8c8d;
-            --border: #edf2f7;
-        }
-
-        body { 
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
-            background-color: var(--bg); 
-            margin: 0; 
-            padding: 0;
-            color: var(--text-main);
-            -webkit-font-smoothing: antialiased;
-        }
-
-        .container {
-            max-width: 650px;
-            margin: 0 auto;
-            padding: 16px 16px 140px 16px;
-        }
-
-        header { 
-            background: linear-gradient(135deg, var(--primary), var(--primary-light)); 
-            color: white; 
-            padding: 20px 16px; 
-            text-align: center; 
-            border-radius: 12px; 
-            margin-bottom: 16px; 
-            box-shadow: 0 4px 12px rgba(44, 62, 80, 0.12);
-        }
-
-        header h1 {
-            margin: 0;
-            font-size: 1.6rem;
-            letter-spacing: 0.5px;
-            font-weight: 700;
-        }
-
-        .customer-section { 
-            background: var(--white); 
-            padding: 16px; 
-            border-radius: 12px; 
-            margin-bottom: 20px; 
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04); 
-            position: relative;
-        }
-
-        .customer-input-wrapper {
-            position: relative;
-            display: flex;
-            align-items: center;
-        }
-
-        .customer-input { 
-            width: 100%; 
-            padding: 14px 40px 14px 16px; 
-            border: 2px solid #e2e8f0; 
-            border-radius: 8px; 
-            font-size: 1.1rem; 
-            font-weight: 700; 
-            text-transform: uppercase; 
-            text-align: center; 
-            box-sizing: border-box; 
-            transition: all 0.2s ease;
-            color: var(--primary);
-            background: #f8fafc;
-        }
-
-        .customer-input:focus {
-            border-color: var(--primary);
-            background: var(--white);
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(44, 62, 80, 0.1);
-        }
-
-        .clear-btn {
-            position: absolute;
-            right: 12px;
-            background: #cbd5e1;
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 22px;
-            height: 22px;
-            font-size: 12px;
-            font-weight: bold;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .category-card { 
-            background: var(--white); 
-            border-radius: 12px; 
-            padding: 18px; 
-            margin-bottom: 16px; 
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04); 
-            border: 1px solid var(--border);
-        }
+        /* Modern Scrollbars & Touch Optimizations */
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
         
-        h3 { 
-            margin: 0 0 14px 0; 
-            color: var(--primary); 
-            font-size: 0.95rem; 
-            text-transform: uppercase; 
-            letter-spacing: 0.5px;
-            font-weight: 700;
-            border-left: 4px solid var(--accent);
-            padding-left: 8px;
-        }
-        
-        .product-row { 
-            display: grid; 
-            grid-template-columns: 1fr 100px; 
-            gap: 12px; 
-            align-items: center; 
-            padding: 12px 0; 
-            border-bottom: 1px solid var(--border); 
-            transition: all 0.2s ease;
+        .glass-header {
+            background: rgba(15, 23, 42, 0.92);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
         }
 
-        .product-row.active-row {
-            background-color: #f0fff4;
-            margin: 0 -10px;
-            padding: 12px 10px;
-            border-radius: 6px;
-        }
-        
-        .product-row:last-child { border-bottom: none; }
-        
-        .product-info { 
-            font-weight: 600; 
-            font-size: 0.9rem; 
-            line-height: 1.4;
-        }
-        
-        .product-meta { 
-            font-size: 0.75rem; 
-            color: var(--text-muted); 
-            font-weight: normal; 
-            margin-top: 2px;
-            display: block;
-        }
-        
-        .qty-wrapper {
-            position: relative;
-            display: flex;
-            align-items: center;
-        }
-
-        input[type="number"] { 
-            width: 100%; 
-            padding: 10px; 
-            border: 1px solid #cbd5e1; 
-            border-radius: 8px; 
-            font-size: 1.05rem; 
-            font-weight: 600;
-            text-align: center; 
-            box-sizing: border-box; 
-            -moz-appearance: textfield;
-            transition: all 0.2s;
-        }
-
-        input[type="number"]::-webkit-outer-spin-button,
-        input[type="number"]::-webkit-inner-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
-        }
-
-        input[type="number"]:focus {
-            border-color: var(--accent);
-            outline: none;
-            background: #fff;
-        }
-        
-        .row-totals { 
-            grid-column: span 2; 
-            font-size: 0.8rem; 
-            color: var(--accent); 
-            font-weight: 700; 
-            text-align: right; 
-            margin-top: 2px;
-        }
-        
-        .summary-panel { 
-            position: fixed; 
-            bottom: 0; 
-            left: 0; 
-            right: 0; 
-            background: rgba(44, 62, 80, 0.96); 
+        .glass-card {
+            background: rgba(255, 255, 255, 0.96);
             backdrop-filter: blur(8px);
             -webkit-backdrop-filter: blur(8px);
-            color: white; 
-            padding: 16px 24px; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            z-index: 100; 
-            box-shadow: 0 -4px 20px rgba(0,0,0,0.15);
         }
 
-        .summary-total-label {
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: #b2bec3;
-            margin-bottom: 2px;
+        /* Mobile input & button touch optimization */
+        input, button { touch-action: manipulation; }
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { 
+            -webkit-appearance: none; 
+            margin: 0; 
         }
+        input[type=number] { -moz-appearance: textfield; }
 
-        .summary-total-value {
-            font-size: 1.4rem;
-            font-weight: 800;
-            color: var(--accent-light);
-        }
-        
-        .summary-btn { 
-            background: var(--accent); 
-            color: white; 
-            border: none; 
-            padding: 14px 24px; 
-            border-radius: 8px; 
-            font-weight: 700; 
-            font-size: 0.95rem;
-            cursor: pointer; 
-            transition: background 0.2s;
-            box-shadow: 0 4px 12px rgba(39, 174, 96, 0.3);
-        }
-
-        .summary-btn:hover { background: var(--accent-light); }
-        
-        #reportModal { 
-            display: none; 
-            position: fixed; 
-            top: 0; 
-            left: 0; 
-            width: 100%; 
-            height: 100%; 
-            background: rgba(0, 0, 0, 0.6); 
-            backdrop-filter: blur(4px);
-            z-index: 1000; 
-            overflow-y: auto; 
-            padding: 16px; 
-            box-sizing: border-box; 
-        }
-        
-        .modal-content { 
-            background: white; 
-            padding: 24px; 
-            border-radius: 16px; 
-            max-width: 550px; 
-            margin: 20px auto; 
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-        }
-        
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 2px solid var(--border);
-            padding-bottom: 12px;
-            margin-bottom: 16px;
-        }
-
-        .modal-title {
-            font-size: 1.25rem;
-            font-weight: 800;
-            color: var(--primary);
-            margin: 0;
-        }
-
-        .modal-close-x {
-            font-size: 28px;
-            cursor: pointer;
-            color: var(--text-muted);
-            line-height: 1;
-        }
-
-        table { 
-            width: 100%; 
-            border-collapse: collapse; 
-            font-size: 0.85rem; 
-            margin-top: 12px; 
-        }
-        
-        th, td { 
-            text-align: left; 
-            padding: 10px 8px; 
-            border-bottom: 1px solid var(--border); 
-        }
-        
-        th { 
-            background: #f8fafc; 
-            color: var(--primary);
+        /* Smooth category button highlight state */
+        .tab-active {
+            background-color: #16a34a !important;
+            color: #ffffff !important;
             font-weight: 700;
-        }
-        
-        .invoice-totals {
-            margin-top: 16px;
-            padding: 14px;
-            background: #f8fafc;
-            border-radius: 8px;
-            font-size: 0.9rem;
-            line-height: 1.6;
+            box-shadow: 0 4px 12px rgba(22, 163, 74, 0.35);
         }
 
-        .bank-details { 
-            background: #fffdf5; 
-            border: 1px solid #fef08a;
-            border-left: 4px solid #f59e0b; 
-            padding: 12px; 
-            margin-top: 16px; 
-            border-radius: 6px;
-            font-size: 0.85rem; 
-            line-height: 1.5;
-        }
-        
-        .btn-block {
-            display: block;
-            width: 100%;
-            padding: 14px;
-            border-radius: 8px;
-            font-weight: 700;
-            font-size: 1rem;
-            border: none;
-            margin-top: 12px;
-            cursor: pointer;
-            transition: all 0.2s;
-            text-align: center;
-            box-sizing: border-box;
-        }
-
-        .pdf-btn { background: #3498db; color: white; box-shadow: 0 4px 10px rgba(52, 152, 219, 0.2); }
-        .pdf-btn:hover { background: #2980b9; }
-        .whatsapp-btn { background: #25D366; color: white; box-shadow: 0 4px 10px rgba(37, 211, 102, 0.2); }
-        .whatsapp-btn:hover { background: #20ba5a; }
-        .reset-btn { background: transparent; color: var(--danger); font-size: 0.9rem; }
-        .reset-btn:hover { background: #fff5f5; }
-
-        /* Print Media Styles to handle pristine PDF Layouts */
-        @media print {
-            body { background: white; color: black; padding: 0; }
-            .container, .summary-panel, .whatsapp-btn, .pdf-btn, .reset-btn, .modal-close-x, .close-btn { display: none !important; }
-            #reportModal { display: block !important; position: relative; background: none; width: 100%; height: auto; padding: 0; }
-            .modal-content { max-width: 100%; padding: 0; border: none; box-shadow: none; margin: 0; }
-            table { width: 100%; font-size: 0.9rem; }
-            th { background: #e2e8f0 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-            .bank-details { border: 1px solid #cbd5e1; background: #f8fafc; }
-        }
+        /* Prevent unwanted highlighting on double-tap */
+        * { -webkit-tap-highlight-color: transparent; }
     </style>
 </head>
-<body>
+<body class="bg-slate-100 text-slate-800 antialiased min-h-screen pb-36 select-none">
 
-<div class="container">
-    <header><h1>Factoryorder</h1></header>
+    <!-- Top Glass Header -->
+    <header class="glass-header text-white sticky top-0 z-30 shadow-md border-b border-slate-700/50">
+        <div class="max-w-3xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
+            <div class="flex items-center gap-2.5">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-green-500 to-emerald-400 flex items-center justify-center text-slate-950 font-black text-xl shadow-lg shadow-green-500/30">
+                    F
+                </div>
+                <div>
+                    <h1 class="font-black text-lg tracking-tight leading-none text-white">Factoryorder</h1>
+                    <p class="text-[10px] text-slate-400 font-medium tracking-wider uppercase mt-0.5">October 2026 Edition</p>
+                </div>
+            </div>
 
-    <div class="customer-section">
-        <div class="customer-input-wrapper">
-            <input type="text" id="customer-name" class="customer-input" placeholder="CUSTOMER NAME" oninput="saveCustomer(this.value)">
-            <button class="clear-btn" onclick="clearCustomer()">×</button>
+            <button onclick="confirmReset()" class="text-xs bg-slate-800 hover:bg-rose-950/80 hover:text-rose-400 text-slate-300 border border-slate-700 px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-all active:scale-95">
+                <i class="fa-solid font-bold fa-rotate-left text-[11px]"></i>
+                <span class="font-medium">Reset</span>
+            </button>
         </div>
-    </div>
+    </header>
 
-    <div id="app"></div>
-</div>
-
-<div class="summary-panel">
-    <div>
-        <div class="summary-total-label">Total Order Value</div>
-        <div class="summary-total-value">₦<span id="grand-value">0</span></div>
-    </div>
-    <button class="summary-btn" onclick="showSummary()">VIEW SUMMARY</button>
-</div>
-
-<div id="reportModal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h2 class="modal-title">ORDER SUMMARY</h2>
-            <span class="modal-close-x" onclick="closeModal()">&times;</span>
-        </div>
+    <main class="max-w-3xl mx-auto px-3 sm:px-4 pt-3">
         
-        <div id="modal-body"></div>
-        
-        <div class="bank-details">
-            <strong style="color: #b45309;">PAYMENT ACCOUNT DETAILS:</strong><br>
-            Bank: <strong>Firstbank</strong><br>
-            Account Name: <strong>Skretting Nigeria Ltd</strong><br>
-            Account Number: <strong style="font-size: 1rem; color: var(--primary);">2025573747</strong>
+        <!-- Customer Details Card -->
+        <div class="glass-card rounded-2xl p-3.5 mb-3 shadow-sm border border-slate-200/80">
+            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
+                <i class="fa-solid fa-user-tag text-green-600"></i> Customer Name
+            </label>
+            <input type="text" id="customerName" 
+                placeholder="ENTER CUSTOMER NAME" 
+                class="w-full bg-slate-50 border-2 border-slate-200 focus:border-green-600 focus:bg-white text-slate-900 font-black text-base px-3.5 py-2.5 rounded-xl uppercase tracking-wide outline-none transition-all placeholder:font-normal placeholder:text-slate-400 placeholder:normal-case shadow-inner"
+                oninput="handleCustomerInput(this)">
         </div>
 
-        <button class="btn-block pdf-btn" onclick="exportPDF()">EXPORT AS PDF / PRINT</button>
-        <button class="btn-block whatsapp-btn" onclick="sendWhatsApp()">SEND VIA WHATSAPP</button>
-        <button class="btn-block reset-btn" onclick="resetData()">Clear & Reset Order Sheet</button>
+        <!-- Sticky Search Bar and Category Tabs -->
+        <div class="mb-3 space-y-2">
+            <div class="relative">
+                <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                <input type="text" id="searchInput" placeholder="Search feed, size, concentrate..." 
+                    class="w-full bg-white border border-slate-200 rounded-xl pl-9 pr-9 py-2.5 text-sm font-medium outline-none focus:border-green-600 focus:ring-2 focus:ring-green-500/20 transition-all shadow-sm"
+                    oninput="handleSearch(this.value)">
+                <button id="clearSearchBtn" onclick="clearSearch()" class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-1">
+                    <i class="fa-solid fa-circle-xmark text-sm"></i>
+                </button>
+            </div>
+
+            <!-- Categories Scroll Bar -->
+            <div class="flex gap-1.5 overflow-x-auto pb-1 no-scrollbar pt-0.5" id="categoryTabs">
+                <!-- Injected via JS -->
+            </div>
+        </div>
+
+        <!-- Product Cards Container -->
+        <div id="productContainer" class="space-y-4">
+            <!-- Dynamic Content Injected Here -->
+        </div>
+
+    </main>
+
+    <!-- Floating Summary Bar -->
+    <div class="fixed bottom-0 left-0 right-0 z-20 bg-slate-900/95 backdrop-blur-md text-white border-t border-slate-800 shadow-2xl px-4 py-3">
+        <div class="max-w-3xl mx-auto flex items-center justify-between gap-3">
+            <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 text-slate-400 text-xs font-medium">
+                    <span><strong id="barTotalBags" class="text-white font-bold text-sm">0</strong> bags</span>
+                    <span class="text-slate-600">•</span>
+                    <span><strong id="barTotalWeight" class="text-emerald-400 font-bold text-sm">0</strong> kg</span>
+                </div>
+                <div class="text-lg sm:text-xl font-black text-white truncate tracking-tight">
+                    ₦<span id="barGrandTotal" class="text-white">0</span>
+                </div>
+            </div>
+
+            <button onclick="openSummaryModal()" class="bg-gradient-to-r from-green-600 to-emerald-500 hover:from-green-500 hover:to-emerald-400 active:scale-95 text-slate-950 font-black text-xs sm:text-sm px-4 sm:px-5 py-3 rounded-xl shadow-lg shadow-green-500/25 flex items-center gap-2 transition-all shrink-0">
+                <i class="fa-solid fa-receipt text-base"></i>
+                <span>VIEW SUMMARY</span>
+            </button>
+        </div>
     </div>
-</div>
 
-<script>
-    const dataStructure = [
-        { cat: "SKRETTING", items: [
-            { name: "Perla Larva", price: 13000, w: 1 },
-            { name: "0.5mm SKRET", price: 50000, w: 5 },
-            { name: "1.0mm SKRET", price: 32500, w: 5 },
-            { name: "1.8mm SKRET", price: 21000, w: 5 },
-            { name: "2.0mm SKRET", price: 29700, w: 15 }
-        ]},
-        { cat: "SUPERIOR", items: [
-            { name: "3.0mm SUPERIOR", price: 24300, w: 15 },
-            { name: "4.5mm SUPERIOR", price: 22200, w: 15 },
-            { name: "6.0mm SUPERIOR", price: 22200, w: 15 },
-            { name: "8.0mm SUPERIOR", price: 22200, w: 15 }
-        ]},
-        { cat: "ESSENTIAL", items: [
-            { name: "3.0mm ESSENTIAL", price: 23250, w: 15 },
-            { name: "4.5mm ESSENTIAL", price: 21150, w: 15 },
-            { name: "6.0mm ESSENTIAL", price: 19650, w: 15 },
-            { name: "8.0mm ESSENTIAL", price: 18150, w: 15 }
-        ]},
-        { cat: "REPRO", items: [ { name: "8.0mm Repro", price: 27000, w: 15 } ]},
-        { cat: "ADDITIVES", items: [
-            { name: "Selko pH", price: 100000, w: 25 },
-            { name: "Aqua Care", price: 47500, w: 1 }
-        ]},
-        { cat: "HENDRIX PRO", items: [
-            { name: "Prestarter", price: 20500, w: 25 },
-            { name: "BStarter Pro", price: 19250, w: 25 },
-            { name: "BGrower Pro", price: 18750, w: 25 },
-            { name: "BFinisher Pro", price: 18750, w: 25 }
-        ]},
-        { cat: "HENDRIX ESSENTIAL", items: [
-            { name: "BStarter Ess", price: 16500, w: 25 },
-            { name: "BFinisher Ess", price: 16000, w: 25 }
-        ]},
-        { cat: "CONCENTRATE", items: [
-            { name: "Layer Prod CCT", price: 80000, w: 50 },
-            { name: "Layer Rearer CCT", price: 77500, w: 50 },
-            { name: "Broiler Starter CCT", price: 95000, w: 50 },
-            { name: "Broiler Finisher CCT", price: 92500, w: 50 },
-            { name: "Breeder CCT", price: 85000, w: 50 }
-        ]},
-        { cat: "MASH", items: [
-            { name: "Layer Mash", price: 13000, w: 25 },
-            { name: "Grower Mash", price: 12900, w: 25 }
-        ]}
-    ];
+    <!-- Toast Notification Banner -->
+    <div id="toast" class="fixed top-16 left-1/2 -translate-x-1/2 z-50 bg-slate-900 text-white text-xs font-bold px-4 py-2.5 rounded-full shadow-2xl border border-slate-700 opacity-0 pointer-events-none transition-all duration-300 flex items-center gap-2">
+        <i id="toastIcon" class="fa-solid fa-circle-check text-green-400"></i>
+        <span id="toastMsg">Action completed</span>
+    </div>
 
-    let state = JSON.parse(localStorage.getItem('factoryOrderData')) || {};
-    let customerName = localStorage.getItem('factoryCustomerName') || '';
+    <!-- Detailed Order Summary Modal -->
+    <div id="summaryModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden flex items-end sm:items-center justify-center p-0 sm:p-4 transition-all duration-200">
+        <div class="bg-white w-full max-w-xl max-h-[90vh] rounded-t-3xl sm:rounded-2xl shadow-2xl flex flex-col overflow-hidden">
+            
+            <!-- Modal Header -->
+            <div class="bg-slate-900 text-white px-5 py-4 flex items-center justify-between border-b border-slate-800">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-file-invoice text-emerald-400 text-lg"></i>
+                    <h2 class="font-black text-base tracking-tight">ORDER DETAILS</h2>
+                </div>
+                <button onclick="closeSummaryModal()" class="w-8 h-8 rounded-full bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center transition-all">
+                    <i class="fa-solid fa-xmark text-base"></i>
+                </button>
+            </div>
 
-    function init() {
-        const app = document.getElementById('app');
-        document.getElementById('customer-name').value = customerName;
-        let html = '';
-        dataStructure.forEach(group => {
-            html += `<div class="category-card"><h3>${group.cat}</h3>`;
-            group.items.forEach(item => {
-                const id = item.name.replace(/\s+/g, '-');
-                const qty = state[id] || '';
-                const isActive = qty > 0 ? 'active-row' : '';
-                html += `
-                    <div class="product-row ${isActive}" id="row-${id}">
-                        <div class="product-info">${item.name}<br><span class="product-meta">₦${item.price.toLocaleString()} (${item.w}kg)</span></div>
-                        <div class="qty-wrapper">
-                            <input type="number" id="input-${id}" placeholder="0" value="${qty}" oninput="update('${id}', this.value)">
-                        </div>
-                        <div class="row-totals" id="total-${id}">${qty > 0 ? (qty * item.w) + 'kg | ₦' + (qty * item.price).toLocaleString() : ''}</div>
-                    </div>`;
-            });
-            html += `</div>`;
+            <!-- Modal Content Body -->
+            <div class="p-4 sm:p-5 overflow-y-auto flex-1 space-y-4">
+                
+                <!-- Customer info header inside summary -->
+                <div class="bg-slate-50 border border-slate-200 rounded-xl p-3 flex items-center justify-between">
+                    <div>
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Customer</span>
+                        <span id="modalCustomerName" class="font-black text-slate-900 text-base uppercase">UNSPECIFIED</span>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Date</span>
+                        <span id="modalDate" class="text-xs font-bold text-slate-700">--/--/----</span>
+                    </div>
+                </div>
+
+                <!-- Breakdown Table -->
+                <div class="border border-slate-200 rounded-xl overflow-hidden">
+                    <table class="w-full text-left text-xs">
+                        <thead class="bg-slate-100 text-slate-600 font-bold border-b border-slate-200 uppercase text-[10px]">
+                            <tr>
+                                <th class="p-2.5">Product</th>
+                                <th class="p-2.5 text-center">Price × Qty</th>
+                                <th class="p-2.5 text-right">Subtotal</th>
+                            </tr>
+                        </thead>
+                        <tbody id="modalTableBody" class="divide-y divide-slate-100 font-medium">
+                            <!-- Injected dynamically -->
+                        </tbody>
+                    </table>
+                    <div id="modalEmptyMsg" class="hidden p-6 text-center text-slate-400 text-xs font-semibold">
+                        No products added to the order yet.
+                    </div>
+                </div>
+
+                <!-- Grand Totals Box -->
+                <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-3.5 text-slate-900 space-y-1.5">
+                    <div class="flex justify-between text-xs">
+                        <span class="text-slate-600 font-medium">Total Quantity:</span>
+                        <span class="font-bold text-slate-900"><span id="modalTotalBags">0</span> Bags</span>
+                    </div>
+                    <div class="flex justify-between text-xs">
+                        <span class="text-slate-600 font-medium">Total Weight:</span>
+                        <span class="font-bold text-slate-900"><span id="modalTotalWeight">0</span> kg</span>
+                    </div>
+                    <div class="border-t border-emerald-200/80 pt-1.5 flex justify-between items-center">
+                        <span class="font-black text-sm text-slate-900">Grand Total:</span>
+                        <span class="font-black text-lg text-emerald-700">₦<span id="modalGrandTotal">0</span></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Action Footer -->
+            <div class="p-4 bg-slate-50 border-t border-slate-200 space-y-2">
+                <button onclick="sendWhatsApp()" class="w-full bg-emerald-600 hover:bg-emerald-700 active:scale-[0.99] text-white font-bold py-3 px-4 rounded-xl shadow-md flex items-center justify-center gap-2 transition-all text-sm">
+                    <i class="fa-brands fa-whatsapp text-lg"></i>
+                    <span>SEND VIA WHATSAPP</span>
+                </button>
+                
+                <div class="grid grid-cols-2 gap-2">
+                    <button onclick="copySummaryText()" class="bg-white hover:bg-slate-100 active:scale-[0.98] text-slate-700 border border-slate-300 font-bold py-2.5 px-3 rounded-xl text-xs flex items-center justify-center gap-1.5 transition-all">
+                        <i class="fa-regular fa-copy"></i>
+                        <span>Copy Order</span>
+                    </button>
+                    <button onclick="shareNative()" class="bg-white hover:bg-slate-100 active:scale-[0.98] text-slate-700 border border-slate-300 font-bold py-2.5 px-3 rounded-xl text-xs flex items-center justify-center gap-1.5 transition-all">
+                        <i class="fa-solid fa-share-nodes"></i>
+                        <span>Share Order</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Application Logic -->
+    <script>
+        /**
+         * Product Catalog Database
+         */
+        const PRODUCT_CATALOG = [
+            {
+                category: "SKRETTING",
+                icon: "fa-fish",
+                items: [
+                    { id: "skret-perla-1", name: "Perla Larva 1kg", price: 13000, weight: 1 },
+                    { id: "skret-05mm-5", name: "0.5mm SKRET (Catfish Feed 0.5mm-0.7mm 5kg)", price: 50000, weight: 5 },
+                    { id: "skret-10mm-5", name: "1.0mm SKRET (Catfish Feed 1.0mm 5kg)", price: 33500, weight: 5 },
+                    { id: "skret-18mm-5", name: "1.8mm SKRET (Catfish Feed 1.8mm 5kg)", price: 22000, weight: 5 },
+                    { id: "skret-20mm-15", name: "2.0mm SKRET (Catfish Feed 2.0mm)", price: 31200, weight: 15 }
+                ]
+            },
+            {
+                category: "SUPERIOR",
+                icon: "fa-award",
+                items: [
+                    { id: "sup-30mm-15", name: "3.0mm SUPERIOR (Catfish Feed 3.0mm)", price: 25800, weight: 15 },
+                    { id: "sup-45mm-15", name: "4.5mm SUPERIOR (Catfish Feed 4.5mm Sup)", price: 24000, weight: 15 },
+                    { id: "sup-60mm-15", name: "6.0mm SUPERIOR (Catfish Feed 6.0mm Sup)", price: 24000, weight: 15 },
+                    { id: "sup-80mm-15", name: "8.0mm SUPERIOR (Catfish Feed 8.0mm Sup)", price: 24000, weight: 15 }
+                ]
+            },
+            {
+                category: "ESSENTIAL",
+                icon: "fa-shield-halved",
+                items: [
+                    { id: "ess-30mm-15", name: "3.0mm ESSENTIAL (Catfish Feed 3.0mm Ess)", price: 24750, weight: 15 },
+                    { id: "ess-45mm-15", name: "4.5mm ESSENTIAL (Catfish Feed 4.5mm Ess)", price: 22650, weight: 15 },
+                    { id: "ess-60mm-15", name: "6.0mm ESSENTIAL (Catfish Feed 6.0mm Ess)", price: 21150, weight: 15 },
+                    { id: "ess-80mm-15", name: "8.0mm ESSENTIAL (Catfish Feed 8.0mm Ess)", price: 19650, weight: 15 }
+                ]
+            },
+            {
+                category: "REPRO",
+                icon: "fa-dna",
+                items: [
+                    { id: "repro-80mm-15", name: "8.0mm Repro", price: 27750, weight: 15 }
+                ]
+            },
+            {
+                category: "ADDITIVES",
+                icon: "fa-flask",
+                items: [
+                    { id: "add-selko-25", name: "Selko pH", price: 101250, weight: 25 },
+                    { id: "add-aquacare-1", name: "Aqua Care", price: 47500, weight: 1 }
+                ]
+            },
+            {
+                category: "HENDRIX PRO",
+                icon: "fa-feather",
+                items: [
+                    { id: "hen-prestar-25", name: "Prestarter 25kg", price: 24750, weight: 25 },
+                    { id: "hen-bstarter-25", name: "BStarter Pro 25kg (Broiler Starter 25kg)", price: 23750, weight: 25 },
+                    { id: "hen-bgrower-25", name: "BGrower Pro 25kg", price: 18750, weight: 25 },
+                    { id: "hen-bfinish-25", name: "BFinisher Pro 25kg (Broiler Finisher 25kg)", price: 23250, weight: 25 }
+                ]
+            },
+            {
+                category: "HENDRIX ESSENTIAL",
+                icon: "fa-egg",
+                items: [
+                    { id: "hen-bstart-ess-25", name: "BStarter Ess 25kg (Broiler Starter Ess 25kg)", price: 21500, weight: 25 },
+                    { id: "hen-bgrow-ess-25", name: "BGrower Ess 25kg (Broiler Grower Ess 25kg)", price: 18250, weight: 25 },
+                    { id: "hen-bfin-ess-25", name: "BFinisher Ess 25kg (Broiler Finisher Ess 25kg)", price: 19500, weight: 25 }
+                ]
+            },
+            {
+                category: "CONCENTRATE (5% CCT)",
+                icon: "fa-boxes-packing",
+                items: [
+                    { id: "cct-layer-prod-50", name: "Layer Prod CCT 5%", price: 111000, weight: 50 },
+                    { id: "cct-layer-rear-50", name: "Layer Rearer CCT 5%", price: 93500, weight: 50 },
+                    { id: "cct-broil-start-50", name: "Broiler Starter CCT 5%", price: 135000, weight: 50 },
+                    { id: "cct-broil-finish-50", name: "Broiler Finisher CCT 5%", price: 131500, weight: 50 },
+                    { id: "cct-breeder-50", name: "Breeder CCT 5%", price: 111000, weight: 50 }
+                ]
+            },
+            {
+                category: "MASH",
+                icon: "fa-wheat-awn",
+                items: [
+                    { id: "mash-layer-25", name: "Layer Mash 25kg", price: 13000, weight: 25 },
+                    { id: "mash-grower-25", name: "Grower Mash 25kg", price: 12900, weight: 25 }
+                ]
+            }
+        ];
+
+        // State variables
+        let orderState = {};
+        let activeCategory = "ALL";
+        let searchQuery = "";
+
+        // Application initialization
+        window.addEventListener('DOMContentLoaded', () => {
+            loadState();
+            renderCategoryTabs();
+            renderProducts();
+            updateTotals();
         });
-        app.innerHTML = html;
-        calculateGrandTotals();
-    }
 
-    function saveCustomer(val) { customerName = val.toUpperCase(); localStorage.setItem('factoryCustomerName', customerName); }
-    function clearCustomer() { document.getElementById('customer-name').value = ''; customerName = ''; localStorage.setItem('factoryCustomerName', ''); }
-    function findItem(id) { for (const g of dataStructure) { for (const i of g.items) { if (i.name.replace(/\s+/g, '-') === id) return i; } } }
-
-    function update(id, value) {
-        const qty = parseInt(value) || 0;
-        const row = document.getElementById(`row-${id}`);
-        
-        if (qty <= 0) {
-            delete state[id];
-            if(row) row.classList.remove('active-row');
-        } else {
-            state[id] = qty;
-            if(row) row.classList.add('active-row');
+        // Load persisted local storage
+        function loadState() {
+            try {
+                const savedOrder = localStorage.getItem('fo_order_state');
+                const savedName = localStorage.getItem('fo_customer_name');
+                if (savedOrder) orderState = JSON.parse(savedOrder);
+                if (savedName) {
+                    document.getElementById('customerName').value = savedName;
+                }
+            } catch (e) {
+                console.error("Storage load error:", e);
+                orderState = {};
+            }
         }
-        
-        localStorage.setItem('factoryOrderData', JSON.stringify(state));
-        const item = findItem(id);
-        document.getElementById(`total-${id}`).innerText = qty > 0 ? `${qty * item.w}kg | ₦${(qty * item.price).toLocaleString()}` : '';
-        calculateGrandTotals();
-    }
 
-    function calculateGrandTotals() {
-        let totalVal = 0;
-        for (const [id, qty] of Object.entries(state)) { const item = findItem(id); if (item) totalVal += (qty * item.price); }
-        document.getElementById('grand-value').innerText = totalVal.toLocaleString();
-    }
+        // Save local state
+        function saveState() {
+            try {
+                localStorage.setItem('fo_order_state', JSON.stringify(orderState));
+            } catch (e) {
+                console.error("Failed to save state:", e);
+            }
+        }
 
-    function showSummary() {
-        const body = document.getElementById('modal-body');
-        let totalW = 0, totalV = 0, totalQ = 0;
-        let tableHtml = `<div style="padding: 8px 0; font-size: 1rem; color: var(--primary);"><strong>CUSTOMER:</strong> ${customerName || 'CASH CUSTOMER'}</div>`;
-        tableHtml += `<table><thead><tr><th>Item (Type)</th><th>Qty</th><th>Price</th><th>Amount</th></tr></thead><tbody>`;
-        
-        dataStructure.forEach(group => {
-            group.items.forEach(item => {
-                const id = item.name.replace(/\s+/g, '-');
-                const qty = state[id] || 0;
-                if (qty > 0) {
-                    const w = qty * item.w;
-                    const v = qty * item.price;
-                    totalW += w; totalV += v; totalQ += qty;
-                    tableHtml += `<tr>
-                        <td>${item.name} (${item.w}kg)</td>
-                        <td>${qty}</td>
-                        <td>₦${item.price.toLocaleString()}</td>
-                        <td>₦${v.toLocaleString()}</td>
-                    </tr>`;
+        function handleCustomerInput(input) {
+            input.value = input.value.toUpperCase();
+            localStorage.setItem('fo_customer_name', input.value);
+        }
+
+        // Render Category Tabs
+        function renderCategoryTabs() {
+            const tabsContainer = document.getElementById('categoryTabs');
+            let html = `
+                <button onclick="setCategory('ALL')" 
+                    class="tab-btn text-xs px-3 py-1.5 rounded-xl font-bold transition-all border border-slate-200 bg-white text-slate-600 shrink-0 ${activeCategory === 'ALL' ? 'tab-active' : ''}">
+                    ALL
+                </button>
+            `;
+
+            PRODUCT_CATALOG.forEach(cat => {
+                const isActive = activeCategory === cat.category;
+                html += `
+                    <button onclick="setCategory('${cat.category}')" 
+                        class="tab-btn text-xs px-3 py-1.5 rounded-xl font-semibold transition-all border border-slate-200 bg-white text-slate-600 shrink-0 flex items-center gap-1.5 ${isActive ? 'tab-active' : ''}">
+                        <i class="fa-solid ${cat.icon} text-[10px]"></i>
+                        <span>${cat.category}</span>
+                    </button>
+                `;
+            });
+
+            tabsContainer.innerHTML = html;
+        }
+
+        function setCategory(cat) {
+            activeCategory = cat;
+            renderCategoryTabs();
+            renderProducts();
+        }
+
+        function handleSearch(val) {
+            searchQuery = val.trim().toLowerCase();
+            document.getElementById('clearSearchBtn').classList.toggle('hidden', searchQuery === "");
+            renderProducts();
+        }
+
+        function clearSearch() {
+            document.getElementById('searchInput').value = "";
+            searchQuery = "";
+            document.getElementById('clearSearchBtn').classList.add('hidden');
+            renderProducts();
+        }
+
+        // Render Product Lists
+        function renderProducts() {
+            const container = document.getElementById('productContainer');
+            let html = "";
+
+            PRODUCT_CATALOG.forEach(cat => {
+                if (activeCategory !== "ALL" && activeCategory !== cat.category) return;
+
+                const filteredItems = cat.items.filter(item => 
+                    item.name.toLowerCase().includes(searchQuery) || 
+                    cat.category.toLowerCase().includes(searchQuery)
+                );
+
+                if (filteredItems.length === 0) return;
+
+                html += `
+                    <div class="glass-card rounded-2xl p-3.5 shadow-sm border border-slate-200/80">
+                        <div class="flex items-center gap-2 mb-3 pb-2 border-b border-slate-100">
+                            <i class="fa-solid ${cat.icon} text-green-600 text-sm"></i>
+                            <h2 class="font-black text-xs text-slate-800 uppercase tracking-wider">${cat.category}</h2>
+                        </div>
+                        <div class="space-y-3">
+                `;
+
+                filteredItems.forEach(item => {
+                    const qty = orderState[item.id] || 0;
+                    const itemTotal = qty * item.price;
+                    const itemWeight = qty * item.weight;
+
+                    html += `
+                        <div class="product-item flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 p-2 rounded-xl transition-all ${qty > 0 ? 'bg-green-50/60 border border-green-200' : 'hover:bg-slate-50'}" id="item-card-${item.id}">
+                            <div class="flex-1 min-w-0">
+                                <div class="font-bold text-slate-900 text-sm leading-snug truncate">${item.name}</div>
+                                <div class="text-xs text-slate-500 font-medium mt-0.5">
+                                    ₦${item.price.toLocaleString()} <span class="text-slate-400">/ bag (${item.weight}kg)</span>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center justify-between sm:justify-end gap-3">
+                                <!-- Row output for weight & subtotal -->
+                                <div class="text-left sm:text-right min-w-[95px]">
+                                    ${qty > 0 ? `
+                                        <div class="text-xs font-black text-slate-900">₦${itemTotal.toLocaleString()}</div>
+                                        <div class="text-[10px] font-bold text-emerald-600">${itemWeight} kg</div>
+                                    ` : `
+                                        <div class="text-[11px] font-medium text-slate-400">Qty: 0</div>
+                                    `}
+                                </div>
+
+                                <!-- Touch Stepper controls -->
+                                <div class="flex items-center bg-slate-100 border border-slate-200 rounded-xl p-1 shadow-inner">
+                                    <button onclick="adjustQty('${item.id}', -1)" class="w-8 h-8 rounded-lg bg-white active:bg-slate-200 text-slate-700 font-bold flex items-center justify-center shadow-sm active:scale-90 transition-all">
+                                        <i class="fa-solid fa-minus text-xs"></i>
+                                    </button>
+                                    
+                                    <input type="number" 
+                                        id="input-${item.id}"
+                                        value="${qty || ''}" 
+                                        placeholder="0"
+                                        min="0"
+                                        oninput="setQty('${item.id}', this.value)"
+                                        class="w-11 text-center bg-transparent font-black text-slate-900 text-sm outline-none">
+
+                                    <button onclick="adjustQty('${item.id}', 1)" class="w-8 h-8 rounded-lg bg-green-600 active:bg-green-700 text-white font-bold flex items-center justify-center shadow-sm active:scale-90 transition-all">
+                                        <i class="fa-solid fa-plus text-xs"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                html += `
+                        </div>
+                    </div>
+                `;
+            });
+
+            if (html === "") {
+                html = `
+                    <div class="text-center py-12 glass-card rounded-2xl border border-slate-200">
+                        <i class="fa-solid fa-box-open text-3xl text-slate-300 mb-2"></i>
+                        <p class="text-slate-500 font-medium text-sm">No matching products found</p>
+                    </div>
+                `;
+            }
+
+            container.innerHTML = html;
+        }
+
+        // Adjust quantity via stepper
+        function adjustQty(id, delta) {
+            const current = orderState[id] || 0;
+            const updated = Math.max(0, current + delta);
+            if (updated === 0) {
+                delete orderState[id];
+            } else {
+                orderState[id] = updated;
+            }
+            saveState();
+            updateItemUI(id);
+            updateTotals();
+        }
+
+        // Set quantity directly
+        function setQty(id, val) {
+            const parsed = parseInt(val, 10);
+            if (isNaN(parsed) || parsed <= 0) {
+                delete orderState[id];
+            } else {
+                orderState[id] = parsed;
+            }
+            saveState();
+            updateItemUI(id);
+            updateTotals();
+        }
+
+        // Fast DOM updates without redrawing entire list
+        function updateItemUI(id) {
+            const input = document.getElementById(`input-${id}`);
+            const card = document.getElementById(`item-card-${id}`);
+            const qty = orderState[id] || 0;
+            
+            if (input && input.value != qty) {
+                input.value = qty || '';
+            }
+
+            const itemObj = findProductById(id);
+            if (itemObj && card) {
+                const itemTotal = qty * itemObj.price;
+                const itemWeight = qty * itemObj.weight;
+                
+                card.className = `product-item flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 p-2 rounded-xl transition-all ${qty > 0 ? 'bg-green-50/60 border border-green-200' : 'hover:bg-slate-50'}`;
+                
+                const previewContainer = card.querySelector('.min-w-\\[95px\\]');
+                if (previewContainer) {
+                    previewContainer.innerHTML = qty > 0 ? `
+                        <div class="text-xs font-black text-slate-900">₦${itemTotal.toLocaleString()}</div>
+                        <div class="text-[10px] font-bold text-emerald-600">${itemWeight} kg</div>
+                    ` : `
+                        <div class="text-[11px] font-medium text-slate-400">Qty: 0</div>
+                    `;
+                }
+            }
+        }
+
+        function findProductById(id) {
+            for (const cat of PRODUCT_CATALOG) {
+                for (const item of cat.items) {
+                    if (item.id === id) return item;
+                }
+            }
+            return null;
+        }
+
+        // Update overall order sums
+        function updateTotals() {
+            let totalBags = 0;
+            let totalWeight = 0;
+            let grandTotal = 0;
+
+            Object.entries(orderState).forEach(([id, qty]) => {
+                const item = findProductById(id);
+                if (item && qty > 0) {
+                    totalBags += qty;
+                    totalWeight += (qty * item.weight);
+                    grandTotal += (qty * item.price);
                 }
             });
-        });
-        
-        tableHtml += `</tbody></table><div class="invoice-totals">`;
-        tableHtml += `Total Bags: <strong>${totalQ}</strong><br>`;
-        tableHtml += `Total Weight: <strong>${totalW.toLocaleString()} kg</strong><br>`;
-        tableHtml += `<div style="font-size: 1.1rem; color: var(--accent); margin-top: 6px; border-top: 1px dashed #cbd5e1; padding-top: 6px;"><strong>Net Payable Amount: ₦${totalV.toLocaleString()}</strong></div></div>`;
-        body.innerHTML = tableHtml;
-        document.getElementById('reportModal').style.display = 'block';
-    }
 
-    function exportPDF() { window.print(); }
+            document.getElementById('barTotalBags').innerText = totalBags.toLocaleString();
+            document.getElementById('barTotalWeight').innerText = totalWeight.toLocaleString();
+            document.getElementById('barGrandTotal').innerText = grandTotal.toLocaleString();
+        }
 
-    function sendWhatsApp() {
-        let text = `*ORDER DETAILS*\n*CUSTOMER: ${customerName || 'CASH CUSTOMER'}*\n--------------------------\n`;
-        let totalV = 0, totalW = 0;
-        
-        dataStructure.forEach(group => {
-            group.items.forEach(item => {
-                const id = item.name.replace(/\s+/g, '-');
-                const qty = state[id] || 0;
-                if (qty > 0) {
-                    const v = qty * item.price, w = qty * item.w;
-                    text += `• ${item.name} (${item.w}kg)\n  ₦${item.price.toLocaleString()} x ${qty} = ₦${v.toLocaleString()} (${w}kg)\n`;
-                    totalV += v; totalW += w;
+        // Summary Modal Handling
+        function openSummaryModal() {
+            const modal = document.getElementById('summaryModal');
+            const tbody = document.getElementById('modalTableBody');
+            const emptyMsg = document.getElementById('modalEmptyMsg');
+            const custInput = document.getElementById('customerName').value.trim();
+
+            document.getElementById('modalCustomerName').innerText = custInput ? custInput.toUpperCase() : "UNSPECIFIED";
+            document.getElementById('modalDate').innerText = new Date().toLocaleDateString('en-GB');
+
+            let totalBags = 0;
+            let totalWeight = 0;
+            let grandTotal = 0;
+            let rowsHtml = "";
+
+            Object.entries(orderState).forEach(([id, qty]) => {
+                const item = findProductById(id);
+                if (item && qty > 0) {
+                    const subtotal = qty * item.price;
+                    const weight = qty * item.weight;
+
+                    totalBags += qty;
+                    totalWeight += weight;
+                    grandTotal += subtotal;
+
+                    rowsHtml += `
+                        <tr>
+                            <td class="p-2.5">
+                                <div class="font-bold text-slate-900">${item.name}</div>
+                                <div class="text-[10px] text-slate-400 font-medium">${weight} kg total weight</div>
+                            </td>
+                            <td class="p-2.5 text-center font-semibold text-slate-700">
+                                ₦${item.price.toLocaleString()} × ${qty}
+                            </td>
+                            <td class="p-2.5 text-right font-black text-slate-900">
+                                ₦${subtotal.toLocaleString()}
+                            </td>
+                        </tr>
+                    `;
                 }
             });
-        });
-        
-        text += `--------------------------\n*TOTAL WEIGHT:* ${totalW.toLocaleString()}kg\n*TOTAL VALUE:* ₦${totalV.toLocaleString()}\n\n`;
-        text += `*BANK DETAILS:*\nSkretting Nigeria Ltd\nFirstbank A/C: 2025573747`;
-        window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
-    }
 
-    function closeModal() { document.getElementById('reportModal').style.display = 'none'; }
-    
-    function resetData() { 
-        if(confirm("Are you sure you want to completely clear this order sheet layout?")) { 
-            state = {}; 
-            customerName = ''; 
-            localStorage.clear(); 
-            init(); 
-            closeModal(); 
-        } 
-    }
-    init();
-</script>
+            if (totalBags === 0) {
+                tbody.innerHTML = "";
+                emptyMsg.classList.remove('hidden');
+            } else {
+                emptyMsg.classList.add('hidden');
+                tbody.innerHTML = rowsHtml;
+            }
+
+            document.getElementById('modalTotalBags').innerText = totalBags.toLocaleString();
+            document.getElementById('modalTotalWeight').innerText = totalWeight.toLocaleString();
+            document.getElementById('modalGrandTotal').innerText = grandTotal.toLocaleString();
+
+            modal.classList.remove('hidden');
+        }
+
+        function closeSummaryModal() {
+            document.getElementById('summaryModal').classList.add('hidden');
+        }
+
+        // WhatsApp-compliant text string formatting
+        function generateOrderText() {
+            const name = document.getElementById('customerName').value.trim().toUpperCase() || "N/A";
+            let text = `*ORDER DETAILS*\n`;
+            text += `*CUSTOMER: ${name}*\n`;
+            text += `--------------------------------\n`;
+
+            let totalBags = 0;
+            let totalWeight = 0;
+            let grandTotal = 0;
+
+            Object.entries(orderState).forEach(([id, qty]) => {
+                const item = findProductById(id);
+                if (item && qty > 0) {
+                    const subtotal = qty * item.price;
+                    const weight = qty * item.weight;
+                    totalBags += qty;
+                    totalWeight += weight;
+                    grandTotal += subtotal;
+
+                    text += `• ${item.name}\n  ₦${item.price.toLocaleString()} x ${qty} = ₦${subtotal.toLocaleString()} (${weight}kg)\n`;
+                }
+            });
+
+            text += `--------------------------------\n`;
+            text += `*TOTAL BAGS:* ${totalBags} bags\n`;
+            text += `*TOTAL WEIGHT:* ${totalWeight} kg\n`;
+            text += `*GRAND TOTAL:* ₦${grandTotal.toLocaleString()}\n`;
+
+            return text;
+        }
+
+        // WhatsApp Share Trigger
+        function sendWhatsApp() {
+            const text = generateOrderText();
+            const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
+            window.open(url, '_blank');
+        }
+
+        // Copy summary clipboard action
+        function copySummaryText() {
+            const text = generateOrderText();
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(text).then(() => {
+                    showToast("Order copied to clipboard!");
+                });
+            } else {
+                const textArea = document.createElement("textarea");
+                textArea.value = text;
+                document.body.appendChild(textArea);
+                textArea.select();
+                try {
+                    document.execCommand('copy');
+                    showToast("Order copied to clipboard!");
+                } catch (err) {
+                    showToast("Failed to copy", true);
+                }
+                document.body.removeChild(textArea);
+            }
+        }
+
+        // Native share sheet fallback
+        function shareNative() {
+            const text = generateOrderText();
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Factoryorder Summary',
+                    text: text
+                }).catch(() => {});
+            } else {
+                copySummaryText();
+            }
+        }
+
+        // Reset Order State
+        function confirmReset() {
+            if (confirm("Are you sure you want to clear all items and reset the order?")) {
+                orderState = {};
+                document.getElementById('customerName').value = "";
+                localStorage.removeItem('fo_order_state');
+                localStorage.removeItem('fo_customer_name');
+                renderProducts();
+                updateTotals();
+                showToast("Order reset successfully");
+            }
+        }
+
+        // Toast message banner
+        function showToast(msg, isError = false) {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toastMsg');
+            const toastIcon = document.getElementById('toastIcon');
+
+            toastMsg.innerText = msg;
+            toastIcon.className = isError ? "fa-solid fa-circle-exclamation text-rose-400" : "fa-solid fa-circle-check text-green-400";
+
+            toast.classList.remove('opacity-0', 'pointer-events-none');
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'pointer-events-none');
+            }, 2500);
+        }
+    </script>
 </body>
 </html>
+```
